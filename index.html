@@ -1,0 +1,219 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Richard's Travel Photography</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f4f4f4;
+            color: #333;
+        }
+        header {
+            background-color: #333;
+            color: #fff;
+            padding: 10px 0;
+            text-align: center;
+        }
+        nav {
+            display: flex;
+            justify-content: center;
+            background-color: #444;
+        }
+        nav a {
+            color: #fff;
+            padding: 14px 20px;
+            text-decoration: none;
+            text-align: center;
+        }
+        nav a:hover {
+            background-color: #555;
+        }
+        section {
+            padding: 20px;
+        }
+        .gallery {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+        .gallery img {
+            margin: 10px;
+            border: 5px solid #fff;
+            box-shadow: 0 0 5px rgba(0, 0, 0, 0.5);
+            max-width: 100%;
+            height: auto;
+            cursor: pointer;
+        }
+        .landscape {
+            max-width: 300px;
+            max-height: 200px;
+        }
+        .portrait {
+            max-width: 200px;
+            max-height: 300px;
+        }
+        .rectangle {
+            max-width: 300px;
+            max-height: 300px;
+        }
+        .button-container {
+            display: flex;
+            justify-content: center;
+            margin: 20px 0;
+        }
+        .show-more-button {
+            padding: 10px 20px;
+            font-size: 16px;
+            cursor: pointer;
+        }
+        footer {
+            background-color: #333;
+            color: #fff;
+            text-align: center;
+            padding: 10px 0;
+            position: relative;
+            width: 100%;
+        }
+        .full-size-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.8);
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+        }
+        .full-size-overlay img {
+            max-width: 90%;
+            max-height: 90%;
+        }
+        .full-size-overlay .close-button {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            background: #fff;
+            border: none;
+            padding: 5px 20px;
+            cursor: pointer;
+            font-size: 18px;
+            border-radius: 20px;
+            height: 30px;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>Richard's Travel Photography</h1>
+    </header>
+    <nav>
+        <a href="#gallery">Gallery</a>
+        <a href="#about">About Me</a>
+        <a href="#contact">Contact</a>
+    </nav>
+    <section id="gallery">
+        <h2>Travel Photography Gallery</h2>
+        <div class="gallery" id="gallery-container">
+            <!-- Images will be dynamically inserted here -->
+        </div>
+        <div class="button-container">
+            <button class="show-more-button" onclick="showMoreImages()">Show More</button>
+        </div>
+    </section>
+    <section id="about">
+        <h2>About Me</h2>
+        <p>Hello! I'm Richard, a passionate travel photographer who loves capturing the beauty of the world. My journeys have taken me to breathtaking places, and through my lens, I strive to share the awe-inspiring moments I experience. Join me on my adventures as I explore the wonders of our planet, one photo at a time.</p>
+    </section>
+    <section id="contact">
+        <h2>Contact</h2>
+        <p>If you would like to get in touch with me, please email me at <a href="mailto:richard20020122@gmail.com">richard20020122@gmail.com</a>.</p>
+        <button onclick="window.location.href='mailto:richard20020122@gmail.com'">Email Contact</button>
+    </section>
+    <footer>
+        <p>&copy; 2024 Richard's Travel Photography. All rights reserved.</p>
+    </footer>
+
+    <div class="full-size-overlay" id="full-size-overlay">
+        <button class="close-button" onclick="closeFullSize()">×</button>
+        <img id="full-size-image" src="" alt="Full Size">
+    </div>
+
+    <script>
+        const initialImages = [
+            'IMG_0097.jpg', 'IMG_0209.jpg', 'IMG_0232.jpg', 'IMG_0280.jpg',
+            'IMG_0465.jpg', 'IMG_0514.jpg', 'IMG_0685.jpg', 'IMG_0745.jpg',
+            'IMG_1545.jpg', 'IMG_1565.jpg'
+        ];
+
+        const additionalImages = [
+            'IMG_1602.jpg', 'IMG_1786.jpg', 'IMG_1807.jpg', 'IMG_1808.jpg',
+            'IMG_1810.jpg', 'IMG_1825.jpg', 'IMG_1855.jpg', 'IMG_1856.jpg',
+            'IMG_1891.jpg', 'IMG_1895.jpg', 'IMG_1913.jpg', 'IMG_1919.jpg',
+            'IMG_1993.jpg', 'IMG_2016.jpg', 'IMG_2021.jpg', 'IMG_2036.jpg', 'IMG_2156.jpg', 'IMG_2331.jpg', 
+            'IMG_2561.jpg', 'IMG_2583.jpg', 'IMG_2599.jpg', 'IMG_2604.jpg', 
+            'IMG_2618.jpg', 'IMG_2641.jpg', 'IMG_2723.jpg', 'IMG_2843.jpg', 
+            'IMG_2943.jpg', 'IMG_2991.jpg', 'IMG_3067.jpg', 'IMG_3135.jpg', 
+            'IMG_3146.jpg', 'IMG_3161.jpg', 'IMG_3185.jpg', 'IMG_3238.jpg', 
+            'IMG_3272.jpg', 'IMG_3299.jpg', 'IMG_3304.jpg', 'IMG_3331.jpg', 
+            'IMG_3354.jpg', 'IMG_3356.jpg'
+        ];
+
+        function loadImages(images, append = false) {
+            const galleryContainer = document.getElementById('gallery-container');
+            const smallPhotoPath = 'photos-1_5_resolution/';
+            const largePhotoPath = 'photos-reduce/';
+            
+            if (!append) galleryContainer.innerHTML = '';
+
+            images.forEach(image => {
+                const img = document.createElement('img');
+                img.src = smallPhotoPath + image;
+                img.alt = 'Travel Photo';
+                img.loading = 'lazy';
+                img.onload = () => {
+                    const aspectRatio = img.naturalWidth / img.naturalHeight;
+                    if (aspectRatio > 1.5) {
+                        img.classList.add('landscape');
+                    } else if (aspectRatio < 0.75) {
+                        img.classList.add('portrait');
+                    } else {
+                        img.classList.add('rectangle');
+                    }
+                };
+                img.onclick = () => showFullSize(largePhotoPath + image);
+                img.onerror = () => {
+                    console.error(`Error loading image: ${image}`);
+                };
+                galleryContainer.appendChild(img);
+            });
+        }
+
+        function showMoreImages() {
+            loadImages(additionalImages, true);
+            document.querySelector('.show-more-button').style.display = 'none';
+        }
+
+        function showFullSize(imageSrc) {
+            const overlay = document.getElementById('full-size-overlay');
+            const fullSizeImage = document.getElementById('full-size-image');
+            fullSizeImage.src = imageSrc;
+            overlay.style.display = 'flex';
+        }
+
+        function closeFullSize() {
+            const overlay = document.getElementById('full-size-overlay');
+            overlay.style.display = 'none';
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            loadImages(initialImages);
+        });
+    </script>
+</body>
+</html>
