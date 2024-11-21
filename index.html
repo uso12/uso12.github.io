@@ -4,8 +4,6 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Richard's Travel Photography</title>
-    <!-- AOS Library -->
-    <link href="https://cdn.jsdelivr.net/npm/aos@2.3.4/dist/aos.css" rel="stylesheet">
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -37,6 +35,31 @@
         section {
             padding: 20px;
         }
+        .galleries {
+            display: flex;
+            flex-direction: column;
+            gap: 50px;
+        }
+        .gallery-container {
+            text-align: center;
+        }
+        .gallery-title {
+            font-size: 24px;
+            margin-bottom: 20px;
+            font-weight: bold;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            color: #555;
+            position: relative;
+        }
+        .gallery-title::after {
+            content: "";
+            display: block;
+            width: 60px;
+            height: 3px;
+            background: #333;
+            margin: 10px auto 0;
+        }
         .gallery {
             display: flex;
             flex-wrap: wrap;
@@ -67,24 +90,6 @@
             max-width: 300px;
             max-height: 300px;
         }
-        .button-container {
-            display: flex;
-            justify-content: center;
-            margin: 20px 0;
-        }
-        .show-more-button {
-            padding: 10px 20px;
-            font-size: 16px;
-            cursor: pointer;
-        }
-        footer {
-            background-color: #333;
-            color: #fff;
-            text-align: center;
-            padding: 10px 0;
-            position: relative;
-            width: 100%;
-        }
         .full-size-overlay {
             display: none;
             position: fixed;
@@ -111,7 +116,24 @@
             cursor: pointer;
             font-size: 18px;
             border-radius: 20px;
-            height: 30px;
+        }
+        .button-container {
+            display: flex;
+            justify-content: center;
+            margin: 20px 0;
+        }
+        .show-more-button {
+            padding: 10px 20px;
+            font-size: 16px;
+            cursor: pointer;
+        }
+        footer {
+            background-color: #333;
+            color: #fff;
+            text-align: center;
+            padding: 10px 0;
+            position: relative;
+            width: 100%;
         }
     </style>
 </head>
@@ -126,8 +148,19 @@
     </nav>
     <section id="gallery">
         <h2>Travel Photography Gallery</h2>
-        <div class="gallery" id="gallery-container">
-            <!-- Images will be dynamically inserted here -->
+        <div class="galleries">
+            <div class="gallery-container" data-category="street">
+                <h3 class="gallery-title">Street</h3>
+                <div class="gallery" id="street-gallery"></div>
+            </div>
+            <div class="gallery-container" data-category="portrait">
+                <h3 class="gallery-title">Portrait</h3>
+                <div class="gallery" id="portrait-gallery"></div>
+            </div>
+            <div class="gallery-container" data-category="nature">
+                <h3 class="gallery-title">Nature</h3>
+                <div class="gallery" id="nature-gallery"></div>
+            </div>
         </div>
         <div class="button-container">
             <button class="show-more-button" onclick="showMoreImages()">Show More</button>
@@ -140,7 +173,6 @@
     <section id="contact">
         <h2>Contact</h2>
         <p>If you would like to get in touch with me, please email me at <a href="mailto:richard20020122@gmail.com">richard20020122@gmail.com</a>.</p>
-        <button onclick="window.location.href='mailto:richard20020122@gmail.com'">Email Contact</button>
     </section>
     <footer>
         <p>&copy; 2024 Richard's Travel Photography. All rights reserved.</p>
@@ -151,81 +183,95 @@
         <img id="full-size-image" src="" alt="Full Size">
     </div>
 
-    <script src="https://cdn.jsdelivr.net/npm/aos@2.3.4/dist/aos.js"></script>
     <script>
-        AOS.init();
+        const categories = {
+            street: [
+                'IMG_0397.jpg', 'IMG_0465.jpg', 'IMG_0745.jpg','IMG_0657.jpg','IMG_0726.jpg', 'IMG_1855.jpg', 'IMG_1810.jpg','IMG_1991.jpg','IMG_1995.jpg','IMG_1945.jpg',
+                'IMG_2006.jpg','IMG_2009.jpg','IMG_2012.jpg','IMG_2013.jpg','IMG_2016_2.jpg','IMG_2017.jpg', 'IMG_2145.jpg','IMG_2159.jpg',
+                'IMG_2168.jpg', 'IMG_2084.jpg','IMG_2269.jpg', 'IMG_2641.jpg', 'IMG_2991.jpg','IMG_3299.jpg','IMG_3304.jpg'
+            ],
+            nature: [
+                'IMG_0466.jpg', 'IMG_1790.jpg','IMG_1545.jpg', 'IMG_1565.jpg','IMG_0779.jpg', 'IMG_0831.jpg', 'IMG_1993.jpg', 'IMG_2016.jpg',
+                'IMG_2238.jpg', 'IMG_2264.jpg', 'IMG_2604.jpg','IMG_2618.jpg','IMG_3331.jpg','IMG_3354.jpg','IMG_3356.jpg',
+                'IMG_1807.jpg', 'IMG_1808.jpg'
+            ],
+            portrait: [
+                'IMG_0653.jpg', 'IMG_0743.jpg', 'IMG_0768.jpg', 'IMG_1850.jpg', 'IMG_1907.jpg', 'IMG_1933.jpg', 'IMG_2599.jpg',
+                'IMG_2943.jpg', 'IMG_3146.jpg', 'IMG_3185.jpg', 'IMG_3363.jpg'
+            ]
+            
+        };
 
-        const initialImages = [
-            'IMG_0097.jpg', 'IMG_0209.jpg', 'IMG_0232.jpg', 'IMG_0280.jpg',
-            'IMG_0465.jpg', 'IMG_0514.jpg', 'IMG_0685.jpg', 'IMG_0745.jpg',
-            'IMG_1545.jpg', 'IMG_1565.jpg'
-        ];
+        const additionalImagesByCategory = {
+            street: [
+                'IMG_0297.jpg', 'IMG_1856.jpg', 'IMG_3135.jpg', 'IMG_3161.jpg','IMG_3737.jpg', 
+                'IMG_0232.jpg','IMG_0514.jpg', 'IMG_0685.jpg', 'IMG_0235.jpg',
+                'IMG_1602.jpg', 'IMG_1825.jpg','IMG_2130.jpg', 'IMG_3067.jpg','IMG_3238.jpg'
+            ],
+            nature: [
+                'IMG_0097.jpg', 'IMG_0209.jpg','IMG_0280.jpg',
+                'IMG_0755.jpg','IMG_0844.jpg','IMG_1786.jpg','IMG_1891.jpg',
+                'IMG_1895.jpg','IMG_1913.jpg','IMG_1919.jpg','IMG_2021.jpg',
+                'IMG_2036.jpg','IMG_2156.jpg','IMG_2331.jpg','IMG_2561.jpg',
+                'IMG_2583.jpg','IMG_2723.jpg','IMG_2843.jpg','IMG_3272.jpg'
+            ],
+            portrait: [
+                'IMG_0659.jpg', 'IMG_3479.jpg','IMG_3573.jpg'
+            ]
+        };
 
-        const additionalImages = [
-            'IMG_1602.jpg', 'IMG_1786.jpg', 'IMG_1807.jpg', 'IMG_1808.jpg',
-            'IMG_1810.jpg', 'IMG_1825.jpg', 'IMG_1855.jpg', 'IMG_1856.jpg',
-            'IMG_1891.jpg', 'IMG_1895.jpg', 'IMG_1913.jpg', 'IMG_1919.jpg',
-            'IMG_1993.jpg', 'IMG_2016.jpg', 'IMG_2021.jpg', 'IMG_2036.jpg', 'IMG_2156.jpg', 'IMG_2331.jpg', 
-            'IMG_2561.jpg', 'IMG_2583.jpg', 'IMG_2599.jpg', 'IMG_2604.jpg', 
-            'IMG_2618.jpg', 'IMG_2641.jpg', 'IMG_2723.jpg', 'IMG_2843.jpg', 
-            'IMG_2943.jpg', 'IMG_2991.jpg', 'IMG_3067.jpg', 'IMG_3135.jpg', 
-            'IMG_3146.jpg', 'IMG_3161.jpg', 'IMG_3185.jpg', 'IMG_3238.jpg', 
-            'IMG_3272.jpg', 'IMG_3299.jpg', 'IMG_3304.jpg', 'IMG_3331.jpg', 
-            'IMG_3354.jpg', 'IMG_3356.jpg',
-            'IMG_3737.jpg', 'IMG_3573.jpg', 'IMG_3479.jpg', 'IMG_3363.jpg', 
-            'IMG_2269.jpg', 'IMG_2264.jpg', 'IMG_2238.jpg', 'IMG_2168.jpg', 
-            'IMG_2159.jpg', 'IMG_2145.jpg', 'IMG_2130.jpg', 'IMG_2084.jpg', 
-            'IMG_2017.jpg', 'IMG_2016_2.jpg', 'IMG_2013.jpg', 'IMG_1995.jpg', 
-            'IMG_1991.jpg', 'IMG_1945.jpg', 'IMG_1933.jpg', 'IMG_1907.jpg', 
-            'IMG_1850.jpg', 'IMG_1790.jpg', 'IMG_0844.jpg', 'IMG_0831.jpg', 
-            'IMG_0779.jpg', 'IMG_0768.jpg', 'IMG_0755.jpg', 'IMG_0743.jpg', 
-            'IMG_0726.jpg', 'IMG_0659.jpg', 'IMG_0657.jpg', 'IMG_0653.jpg', 
-            'IMG_0466.jpg', 'IMG_0397.jpg', 'IMG_0297.jpg', 'IMG_0235.jpg', 
-            'IMG_2012.jpg', 'IMG_2009.jpg', 'IMG_2006.jpg'
-        ];
+        function loadCategory(category, containerId) {
+        const galleryContainer = document.getElementById(containerId);
+        const smallPhotoPath = 'photos-1_5_resolution/';
 
-        function loadImages(images, append = false) {
-            const galleryContainer = document.getElementById('gallery-container');
-            const smallPhotoPath = 'photos-1_5_resolution/';
-            const largePhotoPath = 'photos-reduce/';
-
-            if (!append) galleryContainer.innerHTML = '';
-
-            images.forEach(image => {
-                const img = document.createElement('img');
-                img.src = smallPhotoPath + image;
-                img.alt = 'Travel Photo';
-                img.loading = 'lazy';
-                img.setAttribute('data-aos', 'fade-in');
-                img.setAttribute('data-aos-duration', '1000');
-                img.onload = () => {
-                    const aspectRatio = img.naturalWidth / img.naturalHeight;
-                    if (aspectRatio > 1.5) {
-                        img.classList.add('landscape');
-                    } else if (aspectRatio < 0.75) {
-                        img.classList.add('portrait');
-                    } else {
-                        img.classList.add('rectangle');
-                    }
-                };
-                img.onclick = () => showFullSize(largePhotoPath + image);
-                img.onerror = () => {
-                    console.error(`Error loading image: ${image}`);
-                };
-                img.addEventListener('mouseover', () => {
-                    highlightImage(img);
-                    console.log('Mouse on image: true');
-                });
-                img.addEventListener('mouseout', () => {
-                    resetImages();
-                    console.log('Mouse on image: false');
-                });
-                galleryContainer.appendChild(img);
-            });
+        if (!galleryContainer) {
+            console.error(`Gallery container for category "${category}" not found.`);
+            return;
         }
 
+        categories[category].forEach(image => {
+            const img = document.createElement('img');
+            img.src = smallPhotoPath + image;
+            img.alt = `${category} Photo`;
+            img.onload = () => {
+                const aspectRatio = img.naturalWidth / img.naturalHeight;
+                if (aspectRatio > 1.5) {
+                    img.classList.add('landscape');
+                } else if (aspectRatio < 0.75) {
+                    img.classList.add('portrait');
+                } else {
+                    img.classList.add('rectangle');
+                }
+            };
+            img.onclick = () => showFullSize(smallPhotoPath + image);
+            galleryContainer.appendChild(img);
+        });
+    }
         function showMoreImages() {
-            loadImages(additionalImages, true);
+            Object.keys(additionalImagesByCategory).forEach(category => {
+                const galleryContainer = document.getElementById(`${category}-gallery`);
+                const images = additionalImagesByCategory[category];
+                const smallPhotoPath = 'photos-1_5_resolution/';
+
+                images.forEach(image => {
+                    const img = document.createElement('img');
+                    img.src = smallPhotoPath + image;
+                    img.alt = `${category} Photo`;
+                    img.onload = () => {
+                        const aspectRatio = img.naturalWidth / img.naturalHeight;
+                        if (aspectRatio > 1.5) {
+                            img.classList.add('landscape');
+                        } else if (aspectRatio < 0.75) {
+                            img.classList.add('portrait');
+                        } else {
+                            img.classList.add('rectangle');
+                        }
+                    };
+                    img.onclick = () => showFullSize(smallPhotoPath + image);
+                    galleryContainer.appendChild(img);
+                });
+            });
+
             document.querySelector('.show-more-button').style.display = 'none';
         }
 
@@ -241,38 +287,9 @@
             overlay.style.display = 'none';
         }
 
-        function highlightImage(image) {
-        const images = document.querySelectorAll('.gallery img');
-        images.forEach(img => {
-            if (img !== image) {
-                img.classList.add('fade');
-                console.log(`Added fade to ${img.src}, classes: ${img.classList}`);
-            } else {
-                img.classList.remove('fade');
-                console.log(`Removed fade from ${img.src}, classes: ${img.classList}`);
-            }
-        });
-        }
-
-        function resetImages() {
-            const images = document.querySelectorAll('.gallery img');
-            images.forEach(img => {
-                img.classList.remove('fade');
-                console.log(`Removed fade from ${img.src}, classes: ${img.classList}`);
-            });
-        }
-
-        document.addEventListener('mousemove', (event) => {
-            //console.log(`Mouse coordinates: X=${event.clientX}, Y=${event.clientY}`);
-        });
-
         document.addEventListener('DOMContentLoaded', () => {
-            loadImages(initialImages);
-
-            const galleryImages = document.querySelectorAll('.gallery img');
-            galleryImages.forEach(img => {
-                img.addEventListener('mouseover', () => highlightImage(img));
-                img.addEventListener('mouseout', resetImages);
+            Object.keys(categories).forEach(category => {
+                loadCategory(category, `${category}-gallery`);
             });
         });
     </script>
