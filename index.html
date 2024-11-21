@@ -4,6 +4,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Richard's Travel Photography</title>
+    <!-- AOS Library -->
+    <link href="https://cdn.jsdelivr.net/npm/aos@2.3.4/dist/aos.css" rel="stylesheet">
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -47,6 +49,11 @@
             max-width: 100%;
             height: auto;
             cursor: pointer;
+            transition: opacity 0.3s ease;
+        }
+        .gallery img.fade {
+            opacity: 0.2 !important;
+            transition: opacity 0.3s ease !important;
         }
         .landscape {
             max-width: 300px;
@@ -144,7 +151,10 @@
         <img id="full-size-image" src="" alt="Full Size">
     </div>
 
+    <script src="https://cdn.jsdelivr.net/npm/aos@2.3.4/dist/aos.js"></script>
     <script>
+        AOS.init();
+
         const initialImages = [
             'IMG_0097.jpg', 'IMG_0209.jpg', 'IMG_0232.jpg', 'IMG_0280.jpg',
             'IMG_0465.jpg', 'IMG_0514.jpg', 'IMG_0685.jpg', 'IMG_0745.jpg',
@@ -161,14 +171,24 @@
             'IMG_2943.jpg', 'IMG_2991.jpg', 'IMG_3067.jpg', 'IMG_3135.jpg', 
             'IMG_3146.jpg', 'IMG_3161.jpg', 'IMG_3185.jpg', 'IMG_3238.jpg', 
             'IMG_3272.jpg', 'IMG_3299.jpg', 'IMG_3304.jpg', 'IMG_3331.jpg', 
-            'IMG_3354.jpg', 'IMG_3356.jpg'
+            'IMG_3354.jpg', 'IMG_3356.jpg',
+            'IMG_3737.jpg', 'IMG_3573.jpg', 'IMG_3479.jpg', 'IMG_3363.jpg', 
+            'IMG_2269.jpg', 'IMG_2264.jpg', 'IMG_2238.jpg', 'IMG_2168.jpg', 
+            'IMG_2159.jpg', 'IMG_2145.jpg', 'IMG_2130.jpg', 'IMG_2084.jpg', 
+            'IMG_2017.jpg', 'IMG_2016_2.jpg', 'IMG_2013.jpg', 'IMG_1995.jpg', 
+            'IMG_1991.jpg', 'IMG_1945.jpg', 'IMG_1933.jpg', 'IMG_1907.jpg', 
+            'IMG_1850.jpg', 'IMG_1790.jpg', 'IMG_0844.jpg', 'IMG_0831.jpg', 
+            'IMG_0779.jpg', 'IMG_0768.jpg', 'IMG_0755.jpg', 'IMG_0743.jpg', 
+            'IMG_0726.jpg', 'IMG_0659.jpg', 'IMG_0657.jpg', 'IMG_0653.jpg', 
+            'IMG_0466.jpg', 'IMG_0397.jpg', 'IMG_0297.jpg', 'IMG_0235.jpg', 
+            'IMG_2012.jpg', 'IMG_2009.jpg', 'IMG_2006.jpg'
         ];
 
         function loadImages(images, append = false) {
             const galleryContainer = document.getElementById('gallery-container');
             const smallPhotoPath = 'photos-1_5_resolution/';
             const largePhotoPath = 'photos-reduce/';
-            
+
             if (!append) galleryContainer.innerHTML = '';
 
             images.forEach(image => {
@@ -176,6 +196,8 @@
                 img.src = smallPhotoPath + image;
                 img.alt = 'Travel Photo';
                 img.loading = 'lazy';
+                img.setAttribute('data-aos', 'fade-in');
+                img.setAttribute('data-aos-duration', '1000');
                 img.onload = () => {
                     const aspectRatio = img.naturalWidth / img.naturalHeight;
                     if (aspectRatio > 1.5) {
@@ -190,6 +212,14 @@
                 img.onerror = () => {
                     console.error(`Error loading image: ${image}`);
                 };
+                img.addEventListener('mouseover', () => {
+                    highlightImage(img);
+                    console.log('Mouse on image: true');
+                });
+                img.addEventListener('mouseout', () => {
+                    resetImages();
+                    console.log('Mouse on image: false');
+                });
                 galleryContainer.appendChild(img);
             });
         }
@@ -211,8 +241,39 @@
             overlay.style.display = 'none';
         }
 
+        function highlightImage(image) {
+        const images = document.querySelectorAll('.gallery img');
+        images.forEach(img => {
+            if (img !== image) {
+                img.classList.add('fade');
+                console.log(`Added fade to ${img.src}, classes: ${img.classList}`);
+            } else {
+                img.classList.remove('fade');
+                console.log(`Removed fade from ${img.src}, classes: ${img.classList}`);
+            }
+        });
+        }
+
+        function resetImages() {
+            const images = document.querySelectorAll('.gallery img');
+            images.forEach(img => {
+                img.classList.remove('fade');
+                console.log(`Removed fade from ${img.src}, classes: ${img.classList}`);
+            });
+        }
+
+        document.addEventListener('mousemove', (event) => {
+            //console.log(`Mouse coordinates: X=${event.clientX}, Y=${event.clientY}`);
+        });
+
         document.addEventListener('DOMContentLoaded', () => {
             loadImages(initialImages);
+
+            const galleryImages = document.querySelectorAll('.gallery img');
+            galleryImages.forEach(img => {
+                img.addEventListener('mouseover', () => highlightImage(img));
+                img.addEventListener('mouseout', resetImages);
+            });
         });
     </script>
 </body>
