@@ -276,11 +276,13 @@
         }
 
         function showFullSize(imageSrc) {
-            const overlay = document.getElementById('full-size-overlay');
-            const fullSizeImage = document.getElementById('full-size-image');
-            fullSizeImage.src = imageSrc;
-            overlay.style.display = 'flex';
-        }
+        const overlay = document.getElementById('full-size-overlay');
+        const fullSizeImage = document.getElementById('full-size-image');
+        const highResImageSrc = imageSrc.replace('photos-1_5_resolution/', 'photos-reduce/');
+        fullSizeImage.src = highResImageSrc; // Use high-resolution image
+        overlay.style.display = 'flex';
+    }
+
 
         function closeFullSize() {
             const overlay = document.getElementById('full-size-overlay');
