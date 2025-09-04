@@ -225,41 +225,37 @@
       street: [
         'IMG_0397.jpg', 'IMG_0418.jpg','IMG_0465.jpg',  'IMG_1945.jpg',
         'IMG_2009.jpg','IMG_2017.jpg',
-        'IMG_2991.jpg','IMG_3135.jpg','IMG_3299.jpg','IMG_3304.jpg','IMG_0745.jpg'
+        'IMG_2991.jpg','IMG_3135.jpg','IMG_8385.jpg','IMG_3299.jpg','IMG_3304.jpg','IMG_0745.jpg',
       ],
       nature: [
-        'IMG_1565.jpg','IMG_1786.jpg', 'IMG_0466.jpg', 'IMG_1790.jpg','IMG_1545.jpg',   'IMG_2016.jpg',
+        'IMG_8670.jpg', 'IMG_8845.jpg',
+        'IMG_1565.jpg', 'IMG_0466.jpg', 'IMG_1790.jpg','IMG_1545.jpg',   'IMG_2016.jpg',
         'IMG_2264.jpg',
-        'IMG_1807.jpg', 'IMG_1808.jpg',
+        'IMG_1786.jpg', 'IMG_1807.jpg', 'IMG_1808.jpg',
         'IMG_2344.jpg',
         'IMG_3473.jpg',
         'IMG_3832.jpg',
         'IMG_4962.jpg',
-        'IMG_5844.jpg',
+        
         'IMG_6001.jpg',
         'IMG_7189.jpg', 'IMG_7225.jpg','IMG_7311.jpg', 'IMG_7346.jpg',
         'IMG_2604.jpg','IMG_2618.jpg','IMG_3331.jpg','IMG_3356.jpg',
       ],
       portrait: [
-        'IMG_7511.jpg', 'IMG_7561.jpg', 'IMG_7827.jpg','IMG_7815.jpg', 'IMG_3363.jpg',
-        'IMG_0743.jpg', 'IMG_2848.jpg','IMG_0768.jpg', 'IMG_1850.jpg', 'IMG_1907.jpg',
-        'IMG_3146.jpg', 'IMG_3185.jpg',
+        'IMG_8413.jpg', 'IMG_7815.jpg', 'IMG_7827.jpg', 'IMG_7561.jpg', 'IMG_7511.jpg',
+        'IMG_8645.jpg', 'IMG_8866.jpg','IMG_3363.jpg',
+        'IMG_0743.jpg', 'IMG_0768.jpg', 'IMG_1850.jpg', 'IMG_1907.jpg',
+        'IMG_3146.jpg', 
         'IMG_4767.jpg',
-        'IMG_5457.jpg',
-        'IMG_6053.jpg',
         'IMG_6063.jpg',
-        'IMG_6091.jpg',
         'IMG_6205.jpg',
         'IMG_2407.jpg',
         'IMG_2473.jpg',
-        'IMG_2498.jpg',
         'IMG_6274.jpg',
         'IMG_6335.jpg',
         'IMG_6348.jpg',
         'IMG_6393.jpg',
         'IMG_6413.jpg',
-        'IMG_6442.jpg',
-        'IMG_6825.jpg',
         'IMG_7085.jpg',
         'IMG_4148.jpg',
         'IMG_4335.jpg',
@@ -274,7 +270,7 @@
         'IMG_1177.jpg','IMG_3400.jpg','IMG_2012.jpg','IMG_2016_2.jpg','IMG_2641.jpg',
       ],
       nature: [
-        'IMG_0209.jpg','IMG_0280.jpg',
+        'IMG_5844.jpg','IMG_0209.jpg','IMG_0280.jpg',
         'IMG_0755.jpg',
         'IMG_1895.jpg','IMG_1919.jpg','IMG_1993.jpg','IMG_2021.jpg',
         'IMG_2561.jpg',
@@ -282,7 +278,15 @@
         'IMG_4897.jpg'
       ],
       portrait: [
-        'IMG_7536.jpg','IMG_7737.jpg', 'IMG_7809.jpg', 'IMG_7820.jpg',
+        'IMG_2848.jpg',
+        'IMG_6053.jpg',
+        'IMG_6091.jpg',
+        'IMG_5457.jpg',
+        'IMG_2498.jpg',
+        'IMG_3185.jpg',
+        'IMG_6442.jpg',
+        'IMG_6825.jpg',
+        'IMG_9266.jpg','IMG_7956.jpg','IMG_7975.jpg','IMG_7536.jpg','IMG_7737.jpg', 'IMG_7809.jpg', 'IMG_7820.jpg',
         'IMG_7794.jpg','IMG_0831.jpg','IMG_4732.jpg','IMG_4734.jpg', 'IMG_2943.jpg', 'IMG_4353.jpg','IMG_4797.jpg',
         'IMG_2599.jpg','IMG_3479.jpg','IMG_3573.jpg','IMG_4327.jpg',
       ]
@@ -369,23 +373,44 @@
       }
     }
 
+
+    function applyTransform() {
+      const img = document.getElementById('full-size-image');
+      img.style.transform = `translate(${currentTranslateX}px, ${currentTranslateY}px) scale(${currentScale})`;
+    }
+
     function wheelHandler(e) {
       e.preventDefault();
       const img = document.getElementById('full-size-image');
       if (!img) return;
+      const prevScale = currentScale;
       if (e.deltaY < 0) {
         currentScale *= 1.1;
       } else {
         currentScale /= 1.1;
       }
       currentScale = Math.min(Math.max(currentScale, 0.5), 5);
-      img.style.transform = `scale(${currentScale})`;
+      // Optional: adjust translate to zoom toward cursor
+      const rect = img.getBoundingClientRect();
+      const offsetX = e.clientX - rect.left;
+      const offsetY = e.clientY - rect.top;
+      const dx = (offsetX - currentTranslateX) / prevScale;
+      const dy = (offsetY - currentTranslateY) / prevScale;
+      // calculate new translate to keep focus
+      currentTranslateX -= (currentScale - prevScale) * dx;
+      currentTranslateY -= (currentScale - prevScale) * dy;
+      applyTransform();
     }
 
     function showFullSize(imageSrc, category, index) {
       currentCategory = category;
       currentIndex = index;
       currentScale = 1;
+      currentTranslateX = 0;
+      currentTranslateY = 0;
+      lastTranslateX = 0;
+      lastTranslateY = 0;
+      isPanning = false;
       const overlay = document.getElementById('full-size-overlay');
       const fullSizeImage = document.getElementById('full-size-image');
       const caption = document.getElementById('overlay-caption');
@@ -396,6 +421,14 @@
       updateCaption();
       document.addEventListener('keydown', keyHandler);
       overlay.addEventListener('wheel', wheelHandler, { passive: false });
+
+      // pointer-based panning
+      fullSizeImage.style.cursor = 'grab';
+      fullSizeImage.addEventListener('pointerdown', pointerDownHandler);
+      fullSizeImage.addEventListener('pointermove', pointerMoveHandler);
+      fullSizeImage.addEventListener('pointerup', pointerUpHandler);
+      fullSizeImage.addEventListener('pointerleave', pointerUpHandler);
+      fullSizeImage.addEventListener('pointercancel', pointerUpHandler);
     }
 
     function closeFullSize() {
@@ -403,9 +436,21 @@
       overlay.style.display = 'none';
       document.removeEventListener('keydown', keyHandler);
       overlay.removeEventListener('wheel', wheelHandler);
+      const fullSizeImage = document.getElementById('full-size-image');
+      fullSizeImage.removeEventListener('pointerdown', pointerDownHandler);
+      fullSizeImage.removeEventListener('pointermove', pointerMoveHandler);
+      fullSizeImage.removeEventListener('pointerup', pointerUpHandler);
+      fullSizeImage.removeEventListener('pointerleave', pointerUpHandler);
+      fullSizeImage.removeEventListener('pointercancel', pointerUpHandler);
+      fullSizeImage.style.cursor = '';
       currentCategory = null;
       currentIndex = null;
       currentScale = 1;
+      currentTranslateX = 0;
+      currentTranslateY = 0;
+      lastTranslateX = 0;
+      lastTranslateY = 0;
+      isPanning = false;
     }
 
     function showAdjacent(delta) {
@@ -420,8 +465,55 @@
       const fullSizeImage = document.getElementById('full-size-image');
       fullSizeImage.src = smallPhotoPath + newImage.replace(highResReplacement.from, highResReplacement.to);
       currentScale = 1;
-      fullSizeImage.style.transform = 'scale(1)';
+      currentTranslateX = 0;
+      currentTranslateY = 0;
+      lastTranslateX = 0;
+      lastTranslateY = 0;
+      fullSizeImage.style.cursor = 'grab';
+      applyTransform();
       updateCaption();
+    }
+
+    // panning state
+    let currentTranslateX = 0;
+    let currentTranslateY = 0;
+    let lastTranslateX = 0;
+    let lastTranslateY = 0;
+    let isPanning = false;
+    let startX = 0;
+    let startY = 0;
+
+    function pointerDownHandler(e) {
+      if (e.pointerType === 'mouse' && e.button !== 0) return; // only left click
+      const img = document.getElementById('full-size-image');
+      isPanning = true;
+      startX = e.clientX;
+      startY = e.clientY;
+      lastTranslateX = currentTranslateX;
+      lastTranslateY = currentTranslateY;
+      img.setPointerCapture(e.pointerId);
+      img.style.cursor = 'grabbing';
+    }
+
+    function pointerMoveHandler(e) {
+      if (!isPanning) return;
+      const dx = e.clientX - startX;
+      const dy = e.clientY - startY;
+      currentTranslateX = lastTranslateX + dx;
+      currentTranslateY = lastTranslateY + dy;
+      applyTransform();
+    }
+
+    function pointerUpHandler(e) {
+      if (!isPanning) return;
+      isPanning = false;
+      const img = document.getElementById('full-size-image');
+      img.style.cursor = 'grab';
+      lastTranslateX = currentTranslateX;
+      lastTranslateY = currentTranslateY;
+      if (e.pointerId) {
+        try { img.releasePointerCapture(e.pointerId); } catch {}
+      }
     }
 
     function keyHandler(e) {
