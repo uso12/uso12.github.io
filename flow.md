@@ -1,6 +1,5 @@
 **Markdown**
 
-```
 # Photography Website Update Workflow
 
 This guide documents the steps to add new photos, update the gallery, and deploy changes to GitHub.
