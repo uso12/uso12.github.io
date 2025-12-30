@@ -1,0 +1,7 @@
+# Ignore the staging folder where you drop raw files
+new-full-added/
+Old Structure/
+
+# Ignore Python cache files
+__pycache__/
+*.pyc

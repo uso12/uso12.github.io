@@ -1,0 +1,54 @@
+{
+  "street": {
+    "base": [
+      "IMG_0709.jpg", "IMG_0776.jpg", "IMG_9449.jpg", "IMG_9650.jpg",
+      "IMG_1202.jpg", "IMG_1176.jpg", "IMG_1144.jpg", "IMG_1371.jpg", "IMG_1378.jpg",
+      "IMG_0397.jpg", "IMG_0418.jpg", "IMG_0465.jpg", "IMG_4309.jpg", "IMG_1945.jpg",
+      "IMG_2009.jpg", "IMG_2017.jpg", "IMG_2991.jpg", "IMG_3135.jpg",
+      "IMG_3299.jpg", "IMG_3304.jpg"
+    ],
+    "additional": [
+      "IMG_1162.jpg", "IMG_9505.jpg", "IMG_0745.jpg", "IMG_8385.jpg",
+      "IMG_0726.jpg", "IMG_5076.jpg", "IMG_1810.jpg", "IMG_3737.jpg",
+      "IMG_2168.jpg", "IMG_2084.jpg", "IMG_5259.jpg", "IMG_1177.jpg",
+      "IMG_3400.jpg", "IMG_2012.jpg", "IMG_2016_2.jpg", "IMG_2641.jpg"
+    ]
+  },
+  "nature": {
+    "base": [
+      "StarStaX_IMG_2000-IMG_2293_gap_filling1.jpg", "IMG_1886.jpg",
+      "IMG_8670.jpg", "IMG_4003.jpg","IMG_8845.jpg", "IMG_1565.jpg", "IMG_0466.jpg",
+      "IMG_1790.jpg", "IMG_1545.jpg", "IMG_2016.jpg", "IMG_2264.jpg",
+      "IMG_1786.jpg", "IMG_1807.jpg", "IMG_1808.jpg", "IMG_2344.jpg",
+      "IMG_3832.jpg", "IMG_4962.jpg", "IMG_6001.jpg", "IMG_7189.jpg",
+      "IMG_7225.jpg", "IMG_7311.jpg", "IMG_7346.jpg", "IMG_4129.jpg", "IMG_4147.jpg","IMG_2604.jpg",
+      "IMG_2618.jpg", "IMG_3331.jpg", "IMG_3356.jpg"
+    ],
+    "additional": [
+      "IMG_4006.jpg", "IMG_1621.jpg", "IMG_5844.jpg", "IMG_0209.jpg", "IMG_0280.jpg",
+      "IMG_0755.jpg", "IMG_1895.jpg", "IMG_1919.jpg", "IMG_1993.jpg",
+      "IMG_2021.jpg", "IMG_2561.jpg", "IMG_2583.jpg", "IMG_4897.jpg",
+      "IMG_3473.jpg", "IMG_4141.jpg"
+    ]
+  },
+  "portrait": {
+    "base": [
+      "IMG_3216.jpg", "IMG_3283.jpg", "IMG_3608.jpg", "IMG_1315.jpg", "IMG_8413.jpg", "IMG_7815.jpg", "IMG_7561.jpg",
+      "IMG_7511.jpg", "IMG_8645.jpg", "IMG_8866.jpg", "IMG_3363.jpg",
+      "IMG_0743.jpg", "IMG_0768.jpg", "IMG_1850.jpg", "IMG_1907.jpg",
+      "IMG_3146.jpg", "IMG_4767.jpg", "IMG_6063.jpg", "IMG_6205.jpg",
+      "IMG_2407.jpg", "IMG_2473.jpg", "IMG_6274.jpg", "IMG_6335.jpg",
+      "IMG_6348.jpg", "IMG_6393.jpg", "IMG_6413.jpg", "IMG_7085.jpg", "IMG_2833.jpg",
+      "IMG_4148.jpg", "IMG_4335.jpg", "IMG_1856.jpg"
+    ],
+    "additional": [
+      "IMG_2848.jpg", "IMG_6053.jpg", "IMG_6091.jpg", "IMG_5457.jpg",
+      "IMG_2498.jpg", "IMG_3185.jpg", "IMG_6442.jpg", "IMG_6825.jpg",
+      "IMG_9266.jpg", "IMG_7956.jpg", "IMG_7975.jpg", "IMG_7536.jpg",
+      "IMG_7737.jpg", "IMG_7809.jpg", "IMG_7820.jpg", "IMG_7827.jpg",
+      "IMG_7794.jpg", "IMG_4732.jpg", "IMG_4734.jpg", "IMG_2943.jpg",
+      "IMG_4353.jpg", "IMG_4797.jpg", "IMG_2599.jpg", "IMG_3479.jpg",
+      "IMG_3573.jpg", "IMG_4327.jpg", "IMG_0831.jpg"
+    ]
+  }
+}
