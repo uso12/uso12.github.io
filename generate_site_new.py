@@ -54,6 +54,24 @@ html_head = """<!DOCTYPE html>
         .nav-links a { color: #999; font-size: 13px; text-transform: uppercase; letter-spacing: 2px; font-weight: 700; }
         .nav-links a:hover { color: #fff; padding-left: 5px; }
 
+        /* --- DROPDOWN SUBMENU STYLES --- */
+        .dropdown-container { width: 100%; display: flex; flex-direction: column; }
+        .dropdown-trigger { display: flex; justify-content: space-between; align-items: center; cursor: pointer; color: #999; font-size: 13px; text-transform: uppercase; letter-spacing: 2px; font-weight: 700; }
+        .dropdown-trigger:hover { color: #fff; }
+        
+        .submenu { 
+            display: none; 
+            flex-direction: column; 
+            gap: 12px; 
+            margin-top: 15px; 
+            margin-bottom: 5px;
+            padding-left: 15px; /* Indent */
+            border-left: 1px solid #333; 
+        }
+        .submenu.active { display: flex; }
+        .submenu a { font-size: 11px; color: #666; font-weight: 600; }
+        .submenu a:hover { color: var(--accent); }
+
         .menu-toggle { display: none; font-size: 24px; cursor: pointer; color: white; }
 
         /* --- MAIN CONTENT --- */
@@ -70,15 +88,15 @@ html_head = """<!DOCTYPE html>
             overflow: hidden; 
             display: flex; 
             justify-content: center;
-            align-items: flex-end; /* Text at bottom */
-            padding-bottom: 15vh; /* Push text up slightly */
+            align-items: flex-end; 
+            padding-bottom: 15vh;
             background: #000; 
         }
         
         .slideshow-container { 
             position: absolute; top: 0; left: 0; width: 100%; height: 100%; 
             z-index: 1; 
-            opacity: 0.7; /* Darken background slightly so text pops */
+            opacity: 0.7; 
         } 
         
         .slide { 
@@ -115,33 +133,14 @@ html_head = """<!DOCTYPE html>
         }
         
         .hero-text { 
-            position: relative; 
-            z-index: 3; 
-            text-align: center; 
-            pointer-events: none; 
-            padding: 0 15px; 
-            width: 100%;
-            max-width: 1000px;
+            position: relative; z-index: 3; text-align: center; pointer-events: none; padding: 0 15px; width: 100%; max-width: 1000px;
         }
         .hero-title { 
-            font-size: 4.5rem; 
-            text-transform: uppercase; 
-            letter-spacing: 8px; 
-            margin: 0; 
-            color: #fff; 
-            font-weight: 900; 
-            text-shadow: 0 4px 15px rgba(0,0,0,1); 
-            opacity: 0.5; 
-            line-height: 1.1;
+            font-size: 4.5rem; text-transform: uppercase; letter-spacing: 8px; margin: 0; color: #fff; font-weight: 900; 
+            text-shadow: 0 4px 15px rgba(0,0,0,1); opacity: 0.5; line-height: 1.1;
         }
         .hero-subtitle { 
-            font-size: 1.1rem; 
-            color: #ccc; 
-            margin-top: 15px; 
-            letter-spacing: 4px; 
-            font-weight: 500; 
-            text-transform: uppercase; 
-            opacity: 0.5;
+            font-size: 1.1rem; color: #ccc; margin-top: 15px; letter-spacing: 4px; font-weight: 500; text-transform: uppercase; opacity: 0.5;
         }
 
         /* --- GALLERY NAV --- */
@@ -203,36 +202,35 @@ html_head = """<!DOCTYPE html>
                 position: fixed; top: 60px; left: 0; width: 100%; 
                 background: #111; padding: 20px;
                 display: none; /* Hidden by default */
-                flex-direction: column; align-items: center;
+                flex-direction: column; 
+                /* Remove center alignment to allow proper indenting for submenu */
+                align-items: flex-start; 
                 border-bottom: 1px solid #333;
             }
             .nav-links.active { display: flex; }
+            .nav-links > a, .dropdown-container { width: 100%; border-bottom: 1px solid #222; padding-bottom: 10px; margin-bottom: 10px; }
+            
+            /* Ensure the dropdown trigger looks like the other links */
+            .dropdown-trigger { width: 100%; justify-content: space-between; }
+            
             .socials { margin-top: 0; }
-            .sidebar .socials { display: none; } /* Hide sidebar socials on mobile header, keep in footer */
+            .sidebar .socials { display: none; } 
 
-            /* 3. Adjust Content Width */
             .main-content { margin-left: 0; width: 100%; }
             
-            /* 4. Fix Hero Text Sizing (CRITICAL FIX) */
             .hero-title { 
-                font-size: 1.8rem; /* Much smaller font */
-                letter-spacing: 2px; /* Tighter spacing */
-                line-height: 1.3; /* Allow breathing room if it wraps */
-                white-space: normal; /* Allow text to wrap */
-            }
-            .hero-subtitle { 
-                font-size: 0.75rem; 
+                font-size: 1.8rem; 
                 letter-spacing: 2px; 
-                margin-top: 10px;
+                line-height: 1.3; 
+                white-space: normal; 
             }
+            .hero-subtitle { font-size: 0.75rem; letter-spacing: 2px; margin-top: 10px; }
             
-            /* 5. Slideshow: Stack double images vertically on phone */
             .slide-content-double { flex-direction: column; }
             .double-half { width: 100%; height: 50%; border-right: none; border-bottom: 1px solid rgba(0,0,0,0.5); }
             
-            /* 6. Grid & Padding */
             .gallery-grid { grid-template-columns: 1fr; }
-            section { padding: 40px 15px; } /* Reduce side padding */
+            section { padding: 40px 15px; } 
         }
         
         .lightbox { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.98); z-index: 2000; justify-content: center; align-items: center; }
@@ -260,15 +258,12 @@ def load_image_data(json_file):
 def generate_site():
     categories_js_data, additional_images_js_data = load_image_data(IMAGE_DATA_FILE)
     
-    # --- COLLECT ONLY BASE IMAGES FOR SLIDESHOW ---
     slideshow_images = []
     for cat, images in categories_js_data.items():
         for img in images:
-            # Construct the full path: photos-reduce/category/image.jpg
             path = os.path.join(THUMBNAIL_DIR, cat, img).replace('\\', '/')
             slideshow_images.append(path)
 
-    # Convert to JSON strings for embedding in JS
     cats_json = json.dumps(categories_js_data)
     adds_json = json.dumps(additional_images_js_data)
     bg_images_js = json.dumps(slideshow_images) 
@@ -276,17 +271,30 @@ def generate_site():
     with open("index.html", "w") as f:
         f.write(html_head)
 
-        # 1. SIDEBAR (With Mobile Toggle)
+        # 1. SIDEBAR (Updated with Collapsible Submenu)
         f.write(f"""
         <nav class="sidebar">
             <a href="#home" class="logo">{SITE_TITLE}</a>
             <div class="menu-toggle" onclick="toggleMenu()"><i class="fas fa-bars"></i></div>
+            
             <div class="nav-links" id="navLinks">
                 <a href="#home" onclick="toggleMenu()">Home</a>
-                <a href="#galleries-start" onclick="toggleMenu()">Galleries</a>
+                
+                <div class="dropdown-container">
+                    <div class="dropdown-trigger" onclick="toggleSubmenu()">
+                        Galleries <i class="fas fa-caret-down" id="gal-caret"></i>
+                    </div>
+                    <div class="submenu" id="gal-submenu">
+                        <a href="#street" onclick="toggleMenu()">Street</a>
+                        <a href="#nature" onclick="toggleMenu()">Nature</a>
+                        <a href="#portrait" onclick="toggleMenu()">Portrait</a>
+                    </div>
+                </div>
+
                 <a href="#about" onclick="toggleMenu()">About</a>
                 <a href="#contact" onclick="toggleMenu()">Contact</a>
             </div>
+            
             <div style="margin-top:auto"></div>
         """)
         f.write("<div class='socials' style='justify-content: flex-start;'>")
@@ -383,6 +391,20 @@ def generate_site():
             function toggleMenu() {{
                 const nav = document.getElementById('navLinks');
                 nav.classList.toggle('active');
+            }}
+
+            // --- SUBMENU TOGGLE ---
+            function toggleSubmenu() {{
+                const sub = document.getElementById('gal-submenu');
+                const caret = document.getElementById('gal-caret');
+                sub.classList.toggle('active');
+                if(sub.classList.contains('active')) {{
+                    caret.classList.remove('fa-caret-down');
+                    caret.classList.add('fa-caret-up');
+                }} else {{
+                    caret.classList.remove('fa-caret-up');
+                    caret.classList.add('fa-caret-down');
+                }}
             }}
 
             // --- DATA ---
