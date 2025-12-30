@@ -5,7 +5,9 @@
 This guide documents the steps to add new photos, update the gallery, and deploy changes to GitHub.
 
 ## 0. Prerequisites
+
 Ensure you have the required Python libraries installed:
+
 ```bash
 pip install Pillow
 ```
@@ -96,6 +98,9 @@ git commit -m "Added new photos to street gallery"
 
 # 3. Push to GitHub
 git push origin main
+
+# 4. Pull from GitHub
+git pull origin main
 ```
 
 ---
