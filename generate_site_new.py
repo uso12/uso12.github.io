@@ -70,15 +70,15 @@ html_head = """<!DOCTYPE html>
             overflow: hidden; 
             display: flex; 
             justify-content: center;
-            align-items: flex-end; 
-            padding-bottom: 10vh;
+            align-items: flex-end; /* Text at bottom */
+            padding-bottom: 15vh; /* Push text up slightly */
             background: #000; 
         }
         
         .slideshow-container { 
             position: absolute; top: 0; left: 0; width: 100%; height: 100%; 
             z-index: 1; 
-            opacity: 0.8; 
+            opacity: 0.7; /* Darken background slightly so text pops */
         } 
         
         .slide { 
@@ -115,14 +115,33 @@ html_head = """<!DOCTYPE html>
         }
         
         .hero-text { 
-            position: relative; z-index: 3; text-align: center; pointer-events: none; padding: 0 20px; 
+            position: relative; 
+            z-index: 3; 
+            text-align: center; 
+            pointer-events: none; 
+            padding: 0 15px; 
+            width: 100%;
+            max-width: 1000px;
         }
         .hero-title { 
-            font-size: 4.5rem; text-transform: uppercase; letter-spacing: 8px; margin: 0; color: #fff; font-weight: 900; 
-            text-shadow: 0 4px 15px rgba(0,0,0,1); opacity: 0.5; 
+            font-size: 4.5rem; 
+            text-transform: uppercase; 
+            letter-spacing: 8px; 
+            margin: 0; 
+            color: #fff; 
+            font-weight: 900; 
+            text-shadow: 0 4px 15px rgba(0,0,0,1); 
+            opacity: 0.5; 
+            line-height: 1.1;
         }
         .hero-subtitle { 
-            font-size: 1.1rem; color: #fff; margin-top: 15px; letter-spacing: 4px; font-weight: 500; text-transform: uppercase; opacity: 0.5;
+            font-size: 1.1rem; 
+            color: #ccc; 
+            margin-top: 15px; 
+            letter-spacing: 4px; 
+            font-weight: 500; 
+            text-transform: uppercase; 
+            opacity: 0.5;
         }
 
         /* --- GALLERY NAV --- */
@@ -176,7 +195,7 @@ html_head = """<!DOCTYPE html>
                 border-bottom: 1px solid #333;
                 background: rgba(18, 18, 18, 0.98);
             }
-            .logo { margin-bottom: 0; border-bottom: none; font-size: 18px; }
+            .logo { margin-bottom: 0; border-bottom: none; font-size: 16px; letter-spacing: 0; }
             .menu-toggle { display: block; }
             
             /* 2. Hidden Mobile Menu */
@@ -194,9 +213,18 @@ html_head = """<!DOCTYPE html>
             /* 3. Adjust Content Width */
             .main-content { margin-left: 0; width: 100%; }
             
-            /* 4. Fix Hero Text Sizing */
-            .hero-title { font-size: 2.5rem; letter-spacing: 4px; }
-            .hero-subtitle { font-size: 0.9rem; letter-spacing: 2px; }
+            /* 4. Fix Hero Text Sizing (CRITICAL FIX) */
+            .hero-title { 
+                font-size: 1.8rem; /* Much smaller font */
+                letter-spacing: 2px; /* Tighter spacing */
+                line-height: 1.3; /* Allow breathing room if it wraps */
+                white-space: normal; /* Allow text to wrap */
+            }
+            .hero-subtitle { 
+                font-size: 0.75rem; 
+                letter-spacing: 2px; 
+                margin-top: 10px;
+            }
             
             /* 5. Slideshow: Stack double images vertically on phone */
             .slide-content-double { flex-direction: column; }
@@ -232,7 +260,7 @@ def load_image_data(json_file):
 def generate_site():
     categories_js_data, additional_images_js_data = load_image_data(IMAGE_DATA_FILE)
     
-    # --- CHANGED: COLLECT ONLY BASE IMAGES FOR SLIDESHOW ---
+    # --- COLLECT ONLY BASE IMAGES FOR SLIDESHOW ---
     slideshow_images = []
     for cat, images in categories_js_data.items():
         for img in images:
@@ -243,7 +271,7 @@ def generate_site():
     # Convert to JSON strings for embedding in JS
     cats_json = json.dumps(categories_js_data)
     adds_json = json.dumps(additional_images_js_data)
-    bg_images_js = json.dumps(slideshow_images) # Now using the filtered list
+    bg_images_js = json.dumps(slideshow_images) 
 
     with open("index.html", "w") as f:
         f.write(html_head)
