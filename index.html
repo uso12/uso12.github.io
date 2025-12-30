@@ -16,7 +16,7 @@
         
         body { -webkit-user-select: none; -moz-user-select: none; user-select: none; }
 
-        /* --- SIDEBAR --- */
+        /* --- SIDEBAR (DESKTOP) --- */
         .sidebar {
             width: var(--sidebar-w);
             background-color: rgba(17, 17, 17, 0.98);
@@ -27,10 +27,13 @@
             z-index: 1000;
         }
         .logo { font-size: 22px; color: #fff; font-weight: 800; margin-bottom: 40px; border-bottom: 2px solid var(--accent); padding-bottom: 10px; display: inline-block; letter-spacing: 1px; }
+        
         .nav-links { display: flex; flex-direction: column; gap: 18px; }
         .nav-links a { color: #999; font-size: 13px; text-transform: uppercase; letter-spacing: 2px; font-weight: 700; }
         .nav-links a:hover { color: #fff; padding-left: 5px; }
-        
+
+        .menu-toggle { display: none; font-size: 24px; cursor: pointer; color: white; }
+
         /* --- MAIN CONTENT --- */
         .main-content { 
             margin-left: var(--sidebar-w); 
@@ -38,24 +41,22 @@
             position: relative;
         }
 
-        /* --- HERO SECTION (Slideshow) --- */
+        /* --- HERO SECTION --- */
         .hero { 
             height: 100vh; 
             position: relative; 
             overflow: hidden; 
             display: flex; 
             justify-content: center;
-            /* ALIGN TO LOWER MIDDLE */
             align-items: flex-end; 
-            padding-bottom: 10vh; /* Push text down */
+            padding-bottom: 10vh;
             background: #000; 
-            /* IMPORTANT: No opacity here, or it fades everything! */
         }
         
         .slideshow-container { 
             position: absolute; top: 0; left: 0; width: 100%; height: 100%; 
             z-index: 1; 
-            opacity: 1.1; /* BACKGROUND OPACITY (Controls brightness of photos) */
+            opacity: 0.8; 
         } 
         
         .slide { 
@@ -65,7 +66,6 @@
         }
         .slide.active { opacity: 1; }
 
-        /* --- SLIDE TYPES --- */
         .slide-content-single { width: 100%; height: 100%; position: relative; }
         .slide-content-double { width: 100%; height: 100%; display: flex; }
         
@@ -92,39 +92,18 @@
             background-position: center; 
         }
         
-        /* --- HERO TEXT (Separated Opacity) --- */
         .hero-text { 
-            position: relative; 
-            z-index: 3; 
-            text-align: center; 
-            pointer-events: none; 
-            padding: 0 20px; 
+            position: relative; z-index: 3; text-align: center; pointer-events: none; padding: 0 20px; 
         }
-        
         .hero-title { 
-            font-size: 4.5rem; 
-            text-transform: uppercase; 
-            letter-spacing: 8px; 
-            margin: 0; 
-            color: #fff; 
-            font-weight: 900; 
-            text-shadow: 0 4px 15px rgba(0,0,0,1); 
-            /* TEXT OPACITY (Change this to lower text brightness) */
-            opacity: 0.5; 
+            font-size: 4.5rem; text-transform: uppercase; letter-spacing: 8px; margin: 0; color: #fff; font-weight: 900; 
+            text-shadow: 0 4px 15px rgba(0,0,0,1); opacity: 0.5; 
         }
-        
         .hero-subtitle { 
-            font-size: 1.1rem; 
-            color: #fff; 
-            margin-top: 15px; 
-            letter-spacing: 4px; 
-            font-weight: 500; 
-            text-transform: uppercase;
-            /* SUBTITLE OPACITY */
-            opacity: 0.4;
+            font-size: 1.1rem; color: #fff; margin-top: 15px; letter-spacing: 4px; font-weight: 500; text-transform: uppercase; opacity: 0.5;
         }
 
-        /* --- TOP BANNER NAV --- */
+        /* --- GALLERY NAV --- */
         .gallery-nav { 
             position: sticky; top: 0; z-index: 900; 
             background: rgba(18, 18, 18, 0.95); backdrop-filter: blur(5px);
@@ -137,12 +116,11 @@
         }
         .gallery-nav a:hover { color: var(--accent); }
 
-        /* --- GALLERIES --- */
+        /* --- SECTIONS --- */
         section { padding: 40px; max-width: 1600px; margin: 0 auto; border-bottom: 1px solid #222; }
         .section-header { text-align: center; margin-bottom: 40px; padding-top: 40px; }
         .section-title { font-size: 2.5rem; font-weight: 800; text-transform: uppercase; letter-spacing: 5px; color: #fff; }
 
-        /* --- MASONRY GRID --- */
         .gallery-grid {
             display: grid;
             grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
@@ -153,7 +131,6 @@
         .gallery-item img { width: 100%; display: block; transition: 0.5s; opacity: 0.9; }
         .gallery-item:hover img { transform: scale(1.05); opacity: 1; }
 
-        /* --- BUTTONS --- */
         .btn-wrapper { text-align: center; margin-top: 50px; }
         .view-more-btn {
             background: transparent; border: 2px solid rgba(255,255,255,0.2); color: #fff;
@@ -162,18 +139,50 @@
         }
         .view-more-btn:hover { background: #fff; color: #000; border-color: #fff; }
 
-        /* --- ABOUT & CONTACT --- */
         .text-content { max-width: 700px; margin: 0 auto; text-align: center; line-height: 1.8; color: #ccc; }
         footer { padding: 50px 20px; text-align: center; background: #000; margin-top: 50px; }
         .socials { display: flex; justify-content: center; gap: 20px; margin-bottom: 20px; }
         .socials a { font-size: 1.2rem; color: #666; }
-        .socials a:hover { color: #fff; }
 
+        /* --- MOBILE OPTIMIZATION --- */
         @media (max-width: 900px) {
-            .sidebar { position: relative; width: 100%; height: auto; padding: 20px; border-bottom: 1px solid #333; }
+            /* 1. Sidebar becomes a compact Top Bar */
+            .sidebar { 
+                position: fixed; width: 100%; height: 60px; 
+                padding: 0 20px; 
+                flex-direction: row; align-items: center; justify-content: space-between;
+                border-bottom: 1px solid #333;
+                background: rgba(18, 18, 18, 0.98);
+            }
+            .logo { margin-bottom: 0; border-bottom: none; font-size: 18px; }
+            .menu-toggle { display: block; }
+            
+            /* 2. Hidden Mobile Menu */
+            .nav-links {
+                position: fixed; top: 60px; left: 0; width: 100%; 
+                background: #111; padding: 20px;
+                display: none; /* Hidden by default */
+                flex-direction: column; align-items: center;
+                border-bottom: 1px solid #333;
+            }
+            .nav-links.active { display: flex; }
+            .socials { margin-top: 0; }
+            .sidebar .socials { display: none; } /* Hide sidebar socials on mobile header, keep in footer */
+
+            /* 3. Adjust Content Width */
             .main-content { margin-left: 0; width: 100%; }
+            
+            /* 4. Fix Hero Text Sizing */
+            .hero-title { font-size: 2.5rem; letter-spacing: 4px; }
+            .hero-subtitle { font-size: 0.9rem; letter-spacing: 2px; }
+            
+            /* 5. Slideshow: Stack double images vertically on phone */
+            .slide-content-double { flex-direction: column; }
+            .double-half { width: 100%; height: 50%; border-right: none; border-bottom: 1px solid rgba(0,0,0,0.5); }
+            
+            /* 6. Grid & Padding */
             .gallery-grid { grid-template-columns: 1fr; }
-            .hero-title { font-size: 3rem; }
+            section { padding: 40px 15px; } /* Reduce side padding */
         }
         
         .lightbox { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.98); z-index: 2000; justify-content: center; align-items: center; }
@@ -186,11 +195,12 @@
 
         <nav class="sidebar">
             <a href="#home" class="logo">Richard's Photography</a>
-            <div class="nav-links">
-                <a href="#home">Home</a>
-                <a href="#galleries-start">Galleries</a>
-                <a href="#about">About</a>
-                <a href="#contact">Contact</a>
+            <div class="menu-toggle" onclick="toggleMenu()"><i class="fas fa-bars"></i></div>
+            <div class="nav-links" id="navLinks">
+                <a href="#home" onclick="toggleMenu()">Home</a>
+                <a href="#galleries-start" onclick="toggleMenu()">Galleries</a>
+                <a href="#about" onclick="toggleMenu()">About</a>
+                <a href="#contact" onclick="toggleMenu()">Contact</a>
             </div>
             <div style="margin-top:auto"></div>
         <div class='socials' style='justify-content: flex-start;'><a href='https://www.linkedin.com/in/richard-yang-0b173a2aa/' target="_blank"><i class='fab fa-linkedin'></i></a><a href='https://www.instagram.com/richardyang02/' target="_blank"><i class='fab fa-instagram'></i></a><a href='https://github.com/uso12' target="_blank"><i class='fab fa-github'></i></a><a href='https://open.spotify.com/user/9528flmmasast6krr6mfnveq2?si=da2e3630e6f14d4a' target="_blank"><i class='fab fa-spotify'></i></a><a href='mailto:richard20020122@gmail.com' ><i class='fas fa-envelope'></i></a></div></nav><div class="main-content">
@@ -263,17 +273,23 @@
                 </form>
             </div>
         </section>
-        <footer><p>© 2025 Richard's Photography</p></footer></div>
+        <footer><p>ï¿½ 2025 Richard's Photography</p></footer></div>
         <div class="lightbox" id="lightbox" onclick="closeLightbox()">
             <div class="close-btn"><svg viewBox="0 0 24 24"><path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg></div>
             <img id="lightbox-img" src="">
         </div>
 
         <script>
+            // --- MOBILE MENU TOGGLE ---
+            function toggleMenu() {
+                const nav = document.getElementById('navLinks');
+                nav.classList.toggle('active');
+            }
+
             // --- DATA ---
             const baseCategories = {"street": ["IMG_0709.jpg", "IMG_0776.jpg", "IMG_9449.jpg", "IMG_9650.jpg", "IMG_1202.jpg", "IMG_1176.jpg", "IMG_1144.jpg", "IMG_1371.jpg", "IMG_1378.jpg", "IMG_0397.jpg", "IMG_0418.jpg", "IMG_0465.jpg", "IMG_4309.jpg", "IMG_1945.jpg", "IMG_2009.jpg", "IMG_2017.jpg", "IMG_2991.jpg", "IMG_3135.jpg", "IMG_3299.jpg", "IMG_3304.jpg"], "nature": ["StarStaX_IMG_2000-IMG_2293_gap_filling1.jpg", "IMG_1886.jpg", "IMG_8670.jpg", "IMG_4003.jpg", "IMG_8845.jpg", "IMG_1565.jpg", "IMG_0466.jpg", "IMG_1790.jpg", "IMG_1545.jpg", "IMG_2016.jpg", "IMG_2264.jpg", "IMG_1786.jpg", "IMG_1807.jpg", "IMG_1808.jpg", "IMG_2344.jpg", "IMG_3832.jpg", "IMG_4962.jpg", "IMG_6001.jpg", "IMG_7189.jpg", "IMG_7225.jpg", "IMG_7311.jpg", "IMG_7346.jpg", "IMG_4129.jpg", "IMG_4147.jpg", "IMG_2604.jpg", "IMG_2618.jpg", "IMG_3331.jpg", "IMG_3356.jpg"], "portrait": ["IMG_3216.jpg", "IMG_3283.jpg", "IMG_3608.jpg", "IMG_1315.jpg", "IMG_8413.jpg", "IMG_7815.jpg", "IMG_7561.jpg", "IMG_7511.jpg", "IMG_8645.jpg", "IMG_8866.jpg", "IMG_3363.jpg", "IMG_0743.jpg", "IMG_0768.jpg", "IMG_1850.jpg", "IMG_1907.jpg", "IMG_3146.jpg", "IMG_4767.jpg", "IMG_6063.jpg", "IMG_6205.jpg", "IMG_2407.jpg", "IMG_2473.jpg", "IMG_6274.jpg", "IMG_6335.jpg", "IMG_6348.jpg", "IMG_6393.jpg", "IMG_6413.jpg", "IMG_7085.jpg", "IMG_2833.jpg", "IMG_4148.jpg", "IMG_4335.jpg", "IMG_1856.jpg"]};
             const additionalImages = {"street": ["IMG_1162.jpg", "IMG_9505.jpg", "IMG_0745.jpg", "IMG_8385.jpg", "IMG_0726.jpg", "IMG_5076.jpg", "IMG_1810.jpg", "IMG_3737.jpg", "IMG_2168.jpg", "IMG_2084.jpg", "IMG_5259.jpg", "IMG_1177.jpg", "IMG_3400.jpg", "IMG_2012.jpg", "IMG_2016_2.jpg", "IMG_2641.jpg"], "nature": ["IMG_4006.jpg", "IMG_1621.jpg", "IMG_5844.jpg", "IMG_0209.jpg", "IMG_0280.jpg", "IMG_0755.jpg", "IMG_1895.jpg", "IMG_1919.jpg", "IMG_1993.jpg", "IMG_2021.jpg", "IMG_2561.jpg", "IMG_2583.jpg", "IMG_4897.jpg", "IMG_3473.jpg", "IMG_4141.jpg"], "portrait": ["IMG_2848.jpg", "IMG_6053.jpg", "IMG_6091.jpg", "IMG_5457.jpg", "IMG_2498.jpg", "IMG_3185.jpg", "IMG_6442.jpg", "IMG_6825.jpg", "IMG_9266.jpg", "IMG_7956.jpg", "IMG_7975.jpg", "IMG_7536.jpg", "IMG_7737.jpg", "IMG_7809.jpg", "IMG_7820.jpg", "IMG_7827.jpg", "IMG_7794.jpg", "IMG_4732.jpg", "IMG_4734.jpg", "IMG_2943.jpg", "IMG_4353.jpg", "IMG_4797.jpg", "IMG_2599.jpg", "IMG_3479.jpg", "IMG_3573.jpg", "IMG_4327.jpg", "IMG_0831.jpg"]};
-            const allBgImages = ["photos-reduce/IMG_0779.jpg", "photos-reduce/IMG_1263.JPG", "photos-reduce/IMG_1472.jpg", "photos-reduce/IMG_1838.jpg", "photos-reduce/IMG_3543.jpg", "photos-reduce/IMG_8461.jpg", "photos-reduce/nature/IMG_0209.jpg", "photos-reduce/nature/IMG_0280.jpg", "photos-reduce/nature/IMG_0466.jpg", "photos-reduce/nature/IMG_0755.jpg", "photos-reduce/nature/IMG_1545.jpg", "photos-reduce/nature/IMG_1565.jpg", "photos-reduce/nature/IMG_1621.jpg", "photos-reduce/nature/IMG_1786.jpg", "photos-reduce/nature/IMG_1790.jpg", "photos-reduce/nature/IMG_1807.jpg", "photos-reduce/nature/IMG_1808.jpg", "photos-reduce/nature/IMG_1886.jpg", "photos-reduce/nature/IMG_1895.jpg", "photos-reduce/nature/IMG_1919.jpg", "photos-reduce/nature/IMG_1993.jpg", "photos-reduce/nature/IMG_2016.jpg", "photos-reduce/nature/IMG_2021.jpg", "photos-reduce/nature/IMG_2264.jpg", "photos-reduce/nature/IMG_2344.jpg", "photos-reduce/nature/IMG_2561.jpg", "photos-reduce/nature/IMG_2583.jpg", "photos-reduce/nature/IMG_2604.jpg", "photos-reduce/nature/IMG_2618.jpg", "photos-reduce/nature/IMG_3331.jpg", "photos-reduce/nature/IMG_3356.jpg", "photos-reduce/nature/IMG_3473.jpg", "photos-reduce/nature/IMG_3832.jpg", "photos-reduce/nature/IMG_4003.jpg", "photos-reduce/nature/IMG_4006.jpg", "photos-reduce/nature/IMG_4129.jpg", "photos-reduce/nature/IMG_4141.jpg", "photos-reduce/nature/IMG_4147.jpg", "photos-reduce/nature/IMG_4897.jpg", "photos-reduce/nature/IMG_4962.jpg", "photos-reduce/nature/IMG_5844.jpg", "photos-reduce/nature/IMG_6001.jpg", "photos-reduce/nature/IMG_7189.jpg", "photos-reduce/nature/IMG_7225.jpg", "photos-reduce/nature/IMG_7311.jpg", "photos-reduce/nature/IMG_7346.jpg", "photos-reduce/nature/IMG_8670.jpg", "photos-reduce/nature/IMG_8845.jpg", "photos-reduce/nature/StarStaX_IMG_2000-IMG_2293_gap_filling1.jpg", "photos-reduce/portrait/IMG_0743.jpg", "photos-reduce/portrait/IMG_0768.jpg", "photos-reduce/portrait/IMG_0831.jpg", "photos-reduce/portrait/IMG_1315.jpg", "photos-reduce/portrait/IMG_1850.jpg", "photos-reduce/portrait/IMG_1856.jpg", "photos-reduce/portrait/IMG_1907.jpg", "photos-reduce/portrait/IMG_2407.jpg", "photos-reduce/portrait/IMG_2473.jpg", "photos-reduce/portrait/IMG_2498.jpg", "photos-reduce/portrait/IMG_2599.jpg", "photos-reduce/portrait/IMG_2833.jpg", "photos-reduce/portrait/IMG_2848.jpg", "photos-reduce/portrait/IMG_2943.jpg", "photos-reduce/portrait/IMG_3146.jpg", "photos-reduce/portrait/IMG_3185.jpg", "photos-reduce/portrait/IMG_3216.jpg", "photos-reduce/portrait/IMG_3283.jpg", "photos-reduce/portrait/IMG_3363.jpg", "photos-reduce/portrait/IMG_3479.jpg", "photos-reduce/portrait/IMG_3573.jpg", "photos-reduce/portrait/IMG_3608.jpg", "photos-reduce/portrait/IMG_4148.jpg", "photos-reduce/portrait/IMG_4327.jpg", "photos-reduce/portrait/IMG_4335.jpg", "photos-reduce/portrait/IMG_4353.jpg", "photos-reduce/portrait/IMG_4732.jpg", "photos-reduce/portrait/IMG_4734.jpg", "photos-reduce/portrait/IMG_4767.jpg", "photos-reduce/portrait/IMG_4797.jpg", "photos-reduce/portrait/IMG_5457.jpg", "photos-reduce/portrait/IMG_6053.jpg", "photos-reduce/portrait/IMG_6063.jpg", "photos-reduce/portrait/IMG_6091.jpg", "photos-reduce/portrait/IMG_6205.jpg", "photos-reduce/portrait/IMG_6274.jpg", "photos-reduce/portrait/IMG_6335.jpg", "photos-reduce/portrait/IMG_6348.jpg", "photos-reduce/portrait/IMG_6393.jpg", "photos-reduce/portrait/IMG_6413.jpg", "photos-reduce/portrait/IMG_6442.jpg", "photos-reduce/portrait/IMG_6825.jpg", "photos-reduce/portrait/IMG_7085.jpg", "photos-reduce/portrait/IMG_7511.jpg", "photos-reduce/portrait/IMG_7536.jpg", "photos-reduce/portrait/IMG_7561.jpg", "photos-reduce/portrait/IMG_7737.jpg", "photos-reduce/portrait/IMG_7794.jpg", "photos-reduce/portrait/IMG_7809.jpg", "photos-reduce/portrait/IMG_7815.jpg", "photos-reduce/portrait/IMG_7820.jpg", "photos-reduce/portrait/IMG_7827.jpg", "photos-reduce/portrait/IMG_7956.jpg", "photos-reduce/portrait/IMG_7975.jpg", "photos-reduce/portrait/IMG_8413.jpg", "photos-reduce/portrait/IMG_8645.jpg", "photos-reduce/portrait/IMG_8866.jpg", "photos-reduce/portrait/IMG_9266.jpg", "photos-reduce/street/IMG_0397.jpg", "photos-reduce/street/IMG_0418.jpg", "photos-reduce/street/IMG_0465.jpg", "photos-reduce/street/IMG_0709.jpg", "photos-reduce/street/IMG_0726.jpg", "photos-reduce/street/IMG_0745.jpg", "photos-reduce/street/IMG_0776.jpg", "photos-reduce/street/IMG_1144.jpg", "photos-reduce/street/IMG_1162.jpg", "photos-reduce/street/IMG_1176.jpg", "photos-reduce/street/IMG_1177.jpg", "photos-reduce/street/IMG_1202.jpg", "photos-reduce/street/IMG_1371.jpg", "photos-reduce/street/IMG_1378.jpg", "photos-reduce/street/IMG_1810.jpg", "photos-reduce/street/IMG_1945.jpg", "photos-reduce/street/IMG_2009.jpg", "photos-reduce/street/IMG_2012.jpg", "photos-reduce/street/IMG_2016_2.jpg", "photos-reduce/street/IMG_2017.jpg", "photos-reduce/street/IMG_2084.jpg", "photos-reduce/street/IMG_2168.jpg", "photos-reduce/street/IMG_2641.jpg", "photos-reduce/street/IMG_2991.jpg", "photos-reduce/street/IMG_3135.jpg", "photos-reduce/street/IMG_3299.jpg", "photos-reduce/street/IMG_3304.jpg", "photos-reduce/street/IMG_3400.jpg", "photos-reduce/street/IMG_3737.jpg", "photos-reduce/street/IMG_4309.jpg", "photos-reduce/street/IMG_5076.jpg", "photos-reduce/street/IMG_5259.jpg", "photos-reduce/street/IMG_8385.jpg", "photos-reduce/street/IMG_9449.jpg", "photos-reduce/street/IMG_9505.jpg", "photos-reduce/street/IMG_9650.jpg"];
+            const allBgImages = ["photos-reduce/street/IMG_0709.jpg", "photos-reduce/street/IMG_0776.jpg", "photos-reduce/street/IMG_9449.jpg", "photos-reduce/street/IMG_9650.jpg", "photos-reduce/street/IMG_1202.jpg", "photos-reduce/street/IMG_1176.jpg", "photos-reduce/street/IMG_1144.jpg", "photos-reduce/street/IMG_1371.jpg", "photos-reduce/street/IMG_1378.jpg", "photos-reduce/street/IMG_0397.jpg", "photos-reduce/street/IMG_0418.jpg", "photos-reduce/street/IMG_0465.jpg", "photos-reduce/street/IMG_4309.jpg", "photos-reduce/street/IMG_1945.jpg", "photos-reduce/street/IMG_2009.jpg", "photos-reduce/street/IMG_2017.jpg", "photos-reduce/street/IMG_2991.jpg", "photos-reduce/street/IMG_3135.jpg", "photos-reduce/street/IMG_3299.jpg", "photos-reduce/street/IMG_3304.jpg", "photos-reduce/nature/StarStaX_IMG_2000-IMG_2293_gap_filling1.jpg", "photos-reduce/nature/IMG_1886.jpg", "photos-reduce/nature/IMG_8670.jpg", "photos-reduce/nature/IMG_4003.jpg", "photos-reduce/nature/IMG_8845.jpg", "photos-reduce/nature/IMG_1565.jpg", "photos-reduce/nature/IMG_0466.jpg", "photos-reduce/nature/IMG_1790.jpg", "photos-reduce/nature/IMG_1545.jpg", "photos-reduce/nature/IMG_2016.jpg", "photos-reduce/nature/IMG_2264.jpg", "photos-reduce/nature/IMG_1786.jpg", "photos-reduce/nature/IMG_1807.jpg", "photos-reduce/nature/IMG_1808.jpg", "photos-reduce/nature/IMG_2344.jpg", "photos-reduce/nature/IMG_3832.jpg", "photos-reduce/nature/IMG_4962.jpg", "photos-reduce/nature/IMG_6001.jpg", "photos-reduce/nature/IMG_7189.jpg", "photos-reduce/nature/IMG_7225.jpg", "photos-reduce/nature/IMG_7311.jpg", "photos-reduce/nature/IMG_7346.jpg", "photos-reduce/nature/IMG_4129.jpg", "photos-reduce/nature/IMG_4147.jpg", "photos-reduce/nature/IMG_2604.jpg", "photos-reduce/nature/IMG_2618.jpg", "photos-reduce/nature/IMG_3331.jpg", "photos-reduce/nature/IMG_3356.jpg", "photos-reduce/portrait/IMG_3216.jpg", "photos-reduce/portrait/IMG_3283.jpg", "photos-reduce/portrait/IMG_3608.jpg", "photos-reduce/portrait/IMG_1315.jpg", "photos-reduce/portrait/IMG_8413.jpg", "photos-reduce/portrait/IMG_7815.jpg", "photos-reduce/portrait/IMG_7561.jpg", "photos-reduce/portrait/IMG_7511.jpg", "photos-reduce/portrait/IMG_8645.jpg", "photos-reduce/portrait/IMG_8866.jpg", "photos-reduce/portrait/IMG_3363.jpg", "photos-reduce/portrait/IMG_0743.jpg", "photos-reduce/portrait/IMG_0768.jpg", "photos-reduce/portrait/IMG_1850.jpg", "photos-reduce/portrait/IMG_1907.jpg", "photos-reduce/portrait/IMG_3146.jpg", "photos-reduce/portrait/IMG_4767.jpg", "photos-reduce/portrait/IMG_6063.jpg", "photos-reduce/portrait/IMG_6205.jpg", "photos-reduce/portrait/IMG_2407.jpg", "photos-reduce/portrait/IMG_2473.jpg", "photos-reduce/portrait/IMG_6274.jpg", "photos-reduce/portrait/IMG_6335.jpg", "photos-reduce/portrait/IMG_6348.jpg", "photos-reduce/portrait/IMG_6393.jpg", "photos-reduce/portrait/IMG_6413.jpg", "photos-reduce/portrait/IMG_7085.jpg", "photos-reduce/portrait/IMG_2833.jpg", "photos-reduce/portrait/IMG_4148.jpg", "photos-reduce/portrait/IMG_4335.jpg", "photos-reduce/portrait/IMG_1856.jpg"];
             const thumbDir = "photos-reduce";
             const fullDir = "photos-1_5_resolution";
             let expandedState = { street: false, nature: false, portrait: false };
@@ -281,7 +297,6 @@
             // --- SMART SLIDESHOW ENGINE ---
             const heroContainer = document.getElementById('hero-slides');
             
-            // Fisher-Yates Shuffle
             function shuffle(array) {
                 for (let i = array.length - 1; i > 0; i--) {
                     const j = Math.floor(Math.random() * (i + 1));
@@ -290,13 +305,11 @@
                 return array;
             }
 
-            // Pre-loader for Smart Pairing
             async function initSlideshow() {
                 const shuffledPaths = shuffle(allBgImages.slice()); 
                 const portraits = [];
                 const landscapes = [];
 
-                // 1. Analyze Aspect Ratios
                 await Promise.all(shuffledPaths.map(src => {
                     return new Promise(resolve => {
                         const img = new Image();
@@ -312,10 +325,8 @@
                     });
                 });
 
-                // 2. Build Slide DOM Elements
                 const slideElements = [];
 
-                // A. Force Pair Verticals
                 while(portraits.length >= 2) {
                     const p1 = portraits.pop();
                     const p2 = portraits.pop();
@@ -335,7 +346,6 @@
                     slideElements.push(el);
                 }
 
-                // B. Leftover Portrait (if any) -> Single Slide
                 if(portraits.length > 0) {
                     const p1 = portraits.pop();
                     const el = document.createElement('div');
@@ -348,7 +358,6 @@
                     slideElements.push(el);
                 }
 
-                // C. Landscapes -> Single Slides
                 while(landscapes.length > 0) {
                     const l1 = landscapes.pop();
                     const el = document.createElement('div');
@@ -361,13 +370,11 @@
                     slideElements.push(el);
                 }
 
-                // 3. Shuffle Final Slide Order & Append
                 shuffle(slideElements).forEach((el, index) => {
                     if(index === 0) el.classList.add('active');
                     heroContainer.appendChild(el);
                 });
 
-                // 4. Start Rotation Loop
                 let slideIndex = 0;
                 setInterval(() => {
                     const slides = document.querySelectorAll('.slide');
@@ -375,7 +382,7 @@
                     slides[slideIndex].classList.remove('active');
                     slideIndex = (slideIndex + 1) % slides.length;
                     slides[slideIndex].classList.add('active');
-                }, 8000); // 8 Seconds
+                }, 8000); 
             }
 
             initSlideshow();
@@ -426,7 +433,7 @@
                 for(let x=0; x<allItems.length;x++){ resizeGridItem(allItems[x]); }
             }
             window.addEventListener("resize", resizeAll);
-            Object.keys(baseCategories).forEach(cat => loadCategory(cat)); // Load all keys
+            Object.keys(baseCategories).forEach(cat => loadCategory(cat));
 
             function openLightbox(src) {
                 document.getElementById('lightbox-img').src = src;

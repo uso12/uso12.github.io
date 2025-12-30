@@ -8,7 +8,7 @@ THUMBNAIL_DIR = 'photos-reduce'
 FULL_RES_DIR = 'photos-1_5_resolution'
 SITE_TITLE = "Richard's Photography"
 FORMSPREE_URL = "https://formspree.io/f/mykybnrg" 
-IMAGE_DATA_FILE = "images.json" # New config file
+IMAGE_DATA_FILE = "images.json"
 
 # --- SOCIAL LINKS ---
 SOCIAL_LINKS = [
@@ -38,7 +38,7 @@ html_head = """<!DOCTYPE html>
         
         body { -webkit-user-select: none; -moz-user-select: none; user-select: none; }
 
-        /* --- SIDEBAR --- */
+        /* --- SIDEBAR (DESKTOP) --- */
         .sidebar {
             width: var(--sidebar-w);
             background-color: rgba(17, 17, 17, 0.98);
@@ -49,10 +49,13 @@ html_head = """<!DOCTYPE html>
             z-index: 1000;
         }
         .logo { font-size: 22px; color: #fff; font-weight: 800; margin-bottom: 40px; border-bottom: 2px solid var(--accent); padding-bottom: 10px; display: inline-block; letter-spacing: 1px; }
+        
         .nav-links { display: flex; flex-direction: column; gap: 18px; }
         .nav-links a { color: #999; font-size: 13px; text-transform: uppercase; letter-spacing: 2px; font-weight: 700; }
         .nav-links a:hover { color: #fff; padding-left: 5px; }
-        
+
+        .menu-toggle { display: none; font-size: 24px; cursor: pointer; color: white; }
+
         /* --- MAIN CONTENT --- */
         .main-content { 
             margin-left: var(--sidebar-w); 
@@ -60,24 +63,22 @@ html_head = """<!DOCTYPE html>
             position: relative;
         }
 
-        /* --- HERO SECTION (Slideshow) --- */
+        /* --- HERO SECTION --- */
         .hero { 
             height: 100vh; 
             position: relative; 
             overflow: hidden; 
             display: flex; 
             justify-content: center;
-            /* ALIGN TO LOWER MIDDLE */
             align-items: flex-end; 
-            padding-bottom: 10vh; /* Push text down */
+            padding-bottom: 10vh;
             background: #000; 
-            /* IMPORTANT: No opacity here, or it fades everything! */
         }
         
         .slideshow-container { 
             position: absolute; top: 0; left: 0; width: 100%; height: 100%; 
             z-index: 1; 
-            opacity: 1.1; /* BACKGROUND OPACITY (Controls brightness of photos) */
+            opacity: 0.8; 
         } 
         
         .slide { 
@@ -87,7 +88,6 @@ html_head = """<!DOCTYPE html>
         }
         .slide.active { opacity: 1; }
 
-        /* --- SLIDE TYPES --- */
         .slide-content-single { width: 100%; height: 100%; position: relative; }
         .slide-content-double { width: 100%; height: 100%; display: flex; }
         
@@ -114,39 +114,18 @@ html_head = """<!DOCTYPE html>
             background-position: center; 
         }
         
-        /* --- HERO TEXT (Separated Opacity) --- */
         .hero-text { 
-            position: relative; 
-            z-index: 3; 
-            text-align: center; 
-            pointer-events: none; 
-            padding: 0 20px; 
+            position: relative; z-index: 3; text-align: center; pointer-events: none; padding: 0 20px; 
         }
-        
         .hero-title { 
-            font-size: 4.5rem; 
-            text-transform: uppercase; 
-            letter-spacing: 8px; 
-            margin: 0; 
-            color: #fff; 
-            font-weight: 900; 
-            text-shadow: 0 4px 15px rgba(0,0,0,1); 
-            /* TEXT OPACITY (Change this to lower text brightness) */
-            opacity: 0.5; 
+            font-size: 4.5rem; text-transform: uppercase; letter-spacing: 8px; margin: 0; color: #fff; font-weight: 900; 
+            text-shadow: 0 4px 15px rgba(0,0,0,1); opacity: 0.5; 
         }
-        
         .hero-subtitle { 
-            font-size: 1.1rem; 
-            color: #fff; 
-            margin-top: 15px; 
-            letter-spacing: 4px; 
-            font-weight: 500; 
-            text-transform: uppercase;
-            /* SUBTITLE OPACITY */
-            opacity: 0.4;
+            font-size: 1.1rem; color: #fff; margin-top: 15px; letter-spacing: 4px; font-weight: 500; text-transform: uppercase; opacity: 0.5;
         }
 
-        /* --- TOP BANNER NAV --- */
+        /* --- GALLERY NAV --- */
         .gallery-nav { 
             position: sticky; top: 0; z-index: 900; 
             background: rgba(18, 18, 18, 0.95); backdrop-filter: blur(5px);
@@ -159,12 +138,11 @@ html_head = """<!DOCTYPE html>
         }
         .gallery-nav a:hover { color: var(--accent); }
 
-        /* --- GALLERIES --- */
+        /* --- SECTIONS --- */
         section { padding: 40px; max-width: 1600px; margin: 0 auto; border-bottom: 1px solid #222; }
         .section-header { text-align: center; margin-bottom: 40px; padding-top: 40px; }
         .section-title { font-size: 2.5rem; font-weight: 800; text-transform: uppercase; letter-spacing: 5px; color: #fff; }
 
-        /* --- MASONRY GRID --- */
         .gallery-grid {
             display: grid;
             grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
@@ -175,7 +153,6 @@ html_head = """<!DOCTYPE html>
         .gallery-item img { width: 100%; display: block; transition: 0.5s; opacity: 0.9; }
         .gallery-item:hover img { transform: scale(1.05); opacity: 1; }
 
-        /* --- BUTTONS --- */
         .btn-wrapper { text-align: center; margin-top: 50px; }
         .view-more-btn {
             background: transparent; border: 2px solid rgba(255,255,255,0.2); color: #fff;
@@ -184,18 +161,50 @@ html_head = """<!DOCTYPE html>
         }
         .view-more-btn:hover { background: #fff; color: #000; border-color: #fff; }
 
-        /* --- ABOUT & CONTACT --- */
         .text-content { max-width: 700px; margin: 0 auto; text-align: center; line-height: 1.8; color: #ccc; }
         footer { padding: 50px 20px; text-align: center; background: #000; margin-top: 50px; }
         .socials { display: flex; justify-content: center; gap: 20px; margin-bottom: 20px; }
         .socials a { font-size: 1.2rem; color: #666; }
-        .socials a:hover { color: #fff; }
 
+        /* --- MOBILE OPTIMIZATION --- */
         @media (max-width: 900px) {
-            .sidebar { position: relative; width: 100%; height: auto; padding: 20px; border-bottom: 1px solid #333; }
+            /* 1. Sidebar becomes a compact Top Bar */
+            .sidebar { 
+                position: fixed; width: 100%; height: 60px; 
+                padding: 0 20px; 
+                flex-direction: row; align-items: center; justify-content: space-between;
+                border-bottom: 1px solid #333;
+                background: rgba(18, 18, 18, 0.98);
+            }
+            .logo { margin-bottom: 0; border-bottom: none; font-size: 18px; }
+            .menu-toggle { display: block; }
+            
+            /* 2. Hidden Mobile Menu */
+            .nav-links {
+                position: fixed; top: 60px; left: 0; width: 100%; 
+                background: #111; padding: 20px;
+                display: none; /* Hidden by default */
+                flex-direction: column; align-items: center;
+                border-bottom: 1px solid #333;
+            }
+            .nav-links.active { display: flex; }
+            .socials { margin-top: 0; }
+            .sidebar .socials { display: none; } /* Hide sidebar socials on mobile header, keep in footer */
+
+            /* 3. Adjust Content Width */
             .main-content { margin-left: 0; width: 100%; }
+            
+            /* 4. Fix Hero Text Sizing */
+            .hero-title { font-size: 2.5rem; letter-spacing: 4px; }
+            .hero-subtitle { font-size: 0.9rem; letter-spacing: 2px; }
+            
+            /* 5. Slideshow: Stack double images vertically on phone */
+            .slide-content-double { flex-direction: column; }
+            .double-half { width: 100%; height: 50%; border-right: none; border-bottom: 1px solid rgba(0,0,0,0.5); }
+            
+            /* 6. Grid & Padding */
             .gallery-grid { grid-template-columns: 1fr; }
-            .hero-title { font-size: 3rem; }
+            section { padding: 40px 15px; } /* Reduce side padding */
         }
         
         .lightbox { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.98); z-index: 2000; justify-content: center; align-items: center; }
@@ -208,56 +217,47 @@ html_head = """<!DOCTYPE html>
 """
 
 def load_image_data(json_file):
-    """Loads image data from external JSON file"""
     if not os.path.exists(json_file):
         print(f"Error: {json_file} not found. Please create it.")
         return {}, {}
-        
     with open(json_file, 'r') as f:
         data = json.load(f)
-    
-    # Separate into the two dictionaries expected by the HTML logic
     categories_js = {}
     additional_images_js = {}
-    
     for category, content in data.items():
         categories_js[category] = content.get('base', [])
         additional_images_js[category] = content.get('additional', [])
-        
     return categories_js, additional_images_js
 
-def get_random_backgrounds(directory):
-    if not os.path.exists(directory): return []
-    valid = ('.jpg', '.png', '.jpeg', '.webp')
-    images = []
-    for root, dirs, files in os.walk(directory):
-        for f in files:
-            if f.lower().endswith(valid):
-                path = os.path.join(root, f).replace('\\', '/')
-                images.append(path)
-    return images 
-
 def generate_site():
-    # Load data from JSON
     categories_js_data, additional_images_js_data = load_image_data(IMAGE_DATA_FILE)
     
+    # --- CHANGED: COLLECT ONLY BASE IMAGES FOR SLIDESHOW ---
+    slideshow_images = []
+    for cat, images in categories_js_data.items():
+        for img in images:
+            # Construct the full path: photos-reduce/category/image.jpg
+            path = os.path.join(THUMBNAIL_DIR, cat, img).replace('\\', '/')
+            slideshow_images.append(path)
+
     # Convert to JSON strings for embedding in JS
     cats_json = json.dumps(categories_js_data)
     adds_json = json.dumps(additional_images_js_data)
-    bg_images_js = json.dumps(get_random_backgrounds(THUMBNAIL_DIR))
+    bg_images_js = json.dumps(slideshow_images) # Now using the filtered list
 
     with open("index.html", "w") as f:
         f.write(html_head)
 
-        # 1. SIDEBAR
+        # 1. SIDEBAR (With Mobile Toggle)
         f.write(f"""
         <nav class="sidebar">
             <a href="#home" class="logo">{SITE_TITLE}</a>
-            <div class="nav-links">
-                <a href="#home">Home</a>
-                <a href="#galleries-start">Galleries</a>
-                <a href="#about">About</a>
-                <a href="#contact">Contact</a>
+            <div class="menu-toggle" onclick="toggleMenu()"><i class="fas fa-bars"></i></div>
+            <div class="nav-links" id="navLinks">
+                <a href="#home" onclick="toggleMenu()">Home</a>
+                <a href="#galleries-start" onclick="toggleMenu()">Galleries</a>
+                <a href="#about" onclick="toggleMenu()">About</a>
+                <a href="#contact" onclick="toggleMenu()">Contact</a>
             </div>
             <div style="margin-top:auto"></div>
         """)
@@ -294,7 +294,6 @@ def generate_site():
         """)
 
         # 5. GALLERIES
-        # Dynamically create sections based on keys in JSON
         for cat in categories_js_data.keys():
             f.write(f"""
             <section id="{cat}">
@@ -352,6 +351,12 @@ def generate_site():
         </div>
 
         <script>
+            // --- MOBILE MENU TOGGLE ---
+            function toggleMenu() {{
+                const nav = document.getElementById('navLinks');
+                nav.classList.toggle('active');
+            }}
+
             // --- DATA ---
             const baseCategories = {cats_json};
             const additionalImages = {adds_json};
@@ -363,7 +368,6 @@ def generate_site():
             // --- SMART SLIDESHOW ENGINE ---
             const heroContainer = document.getElementById('hero-slides');
             
-            // Fisher-Yates Shuffle
             function shuffle(array) {{
                 for (let i = array.length - 1; i > 0; i--) {{
                     const j = Math.floor(Math.random() * (i + 1));
@@ -372,13 +376,11 @@ def generate_site():
                 return array;
             }}
 
-            // Pre-loader for Smart Pairing
             async function initSlideshow() {{
                 const shuffledPaths = shuffle(allBgImages.slice()); 
                 const portraits = [];
                 const landscapes = [];
 
-                // 1. Analyze Aspect Ratios
                 await Promise.all(shuffledPaths.map(src => {{
                     return new Promise(resolve => {{
                         const img = new Image();
@@ -394,10 +396,8 @@ def generate_site():
                     }});
                 }});
 
-                // 2. Build Slide DOM Elements
                 const slideElements = [];
 
-                // A. Force Pair Verticals
                 while(portraits.length >= 2) {{
                     const p1 = portraits.pop();
                     const p2 = portraits.pop();
@@ -417,7 +417,6 @@ def generate_site():
                     slideElements.push(el);
                 }}
 
-                // B. Leftover Portrait (if any) -> Single Slide
                 if(portraits.length > 0) {{
                     const p1 = portraits.pop();
                     const el = document.createElement('div');
@@ -430,7 +429,6 @@ def generate_site():
                     slideElements.push(el);
                 }}
 
-                // C. Landscapes -> Single Slides
                 while(landscapes.length > 0) {{
                     const l1 = landscapes.pop();
                     const el = document.createElement('div');
@@ -443,13 +441,11 @@ def generate_site():
                     slideElements.push(el);
                 }}
 
-                // 3. Shuffle Final Slide Order & Append
                 shuffle(slideElements).forEach((el, index) => {{
                     if(index === 0) el.classList.add('active');
                     heroContainer.appendChild(el);
                 }});
 
-                // 4. Start Rotation Loop
                 let slideIndex = 0;
                 setInterval(() => {{
                     const slides = document.querySelectorAll('.slide');
@@ -457,7 +453,7 @@ def generate_site():
                     slides[slideIndex].classList.remove('active');
                     slideIndex = (slideIndex + 1) % slides.length;
                     slides[slideIndex].classList.add('active');
-                }}, 8000); // 8 Seconds
+                }}, 8000); 
             }}
 
             initSlideshow();
@@ -508,7 +504,7 @@ def generate_site():
                 for(let x=0; x<allItems.length;x++){{ resizeGridItem(allItems[x]); }}
             }}
             window.addEventListener("resize", resizeAll);
-            Object.keys(baseCategories).forEach(cat => loadCategory(cat)); // Load all keys
+            Object.keys(baseCategories).forEach(cat => loadCategory(cat));
 
             function openLightbox(src) {{
                 document.getElementById('lightbox-img').src = src;
