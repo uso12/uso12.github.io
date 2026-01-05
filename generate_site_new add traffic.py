@@ -1,9 +1,31 @@
-<!DOCTYPE html>
+import os
+import urllib.parse
+import random
+import json
+
+# --- CONFIGURATION ---
+THUMBNAIL_DIR = 'photos-reduce'
+FULL_RES_DIR = 'photos-1_5_resolution'
+SITE_TITLE = "Richard's Photography"
+FORMSPREE_URL = "https://formspree.io/f/mykybnrg" 
+IMAGE_DATA_FILE = "images.json"
+
+# --- SOCIAL LINKS ---
+SOCIAL_LINKS = [
+    {"icon": "fab fa-linkedin", "url": "https://www.linkedin.com/in/richard-yang-0b173a2aa/"},
+    {"icon": "fab fa-instagram", "url": "https://www.instagram.com/richardyang02/"},
+    {"icon": "fab fa-github", "url": "https://github.com/uso12"},
+    {"icon": "fab fa-spotify", "url": "https://open.spotify.com/user/9528flmmasast6krr6mfnveq2?si=da2e3630e6f14d4a"},
+    {"icon": "fas fa-envelope", "url": "mailto:richard20020122@gmail.com"}
+]
+
+# --- HTML HEADER TEMPLATE ---
+html_head = """<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Richard's Photography</title>
+    <title>""" + SITE_TITLE + """</title>
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700;900&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <style>
@@ -217,9 +239,41 @@
     <script>document.addEventListener('contextmenu', event => event.preventDefault());</script>
 </head>
 <body>
+"""
 
+def load_image_data(json_file):
+    if not os.path.exists(json_file):
+        print(f"Error: {json_file} not found. Please create it.")
+        return {}, {}
+    with open(json_file, 'r') as f:
+        data = json.load(f)
+    categories_js = {}
+    additional_images_js = {}
+    for category, content in data.items():
+        categories_js[category] = content.get('base', [])
+        additional_images_js[category] = content.get('additional', [])
+    return categories_js, additional_images_js
+
+def generate_site():
+    categories_js_data, additional_images_js_data = load_image_data(IMAGE_DATA_FILE)
+    
+    slideshow_images = []
+    for cat, images in categories_js_data.items():
+        for img in images:
+            path = os.path.join(THUMBNAIL_DIR, cat, img).replace('\\', '/')
+            slideshow_images.append(path)
+
+    cats_json = json.dumps(categories_js_data)
+    adds_json = json.dumps(additional_images_js_data)
+    bg_images_js = json.dumps(slideshow_images) 
+
+    with open("index.html", "w") as f:
+        f.write(html_head)
+
+        # 1. SIDEBAR
+        f.write(f"""
         <nav class="sidebar">
-            <a href="#home" class="logo">Richard's Photography</a>
+            <a href="#home" class="logo">{SITE_TITLE}</a>
             <div class="menu-toggle" onclick="toggleMenu()"><i class="fas fa-bars"></i></div>
             
             <div class="nav-links" id="navLinks">
@@ -239,15 +293,29 @@
             </div>
             
             <div style="margin-top:auto"></div>
-        <div class='socials' style='justify-content: flex-start;'><a href='https://www.linkedin.com/in/richard-yang-0b173a2aa/' target="_blank"><i class='fab fa-linkedin'></i></a><a href='https://www.instagram.com/richardyang02/' target="_blank"><i class='fab fa-instagram'></i></a><a href='https://github.com/uso12' target="_blank"><i class='fab fa-github'></i></a><a href='https://open.spotify.com/user/9528flmmasast6krr6mfnveq2?si=da2e3630e6f14d4a' target="_blank"><i class='fab fa-spotify'></i></a><a href='mailto:richard20020122@gmail.com' ><i class='fas fa-envelope'></i></a></div></nav><div class="main-content">
+        """)
+        f.write("<div class='socials' style='justify-content: flex-start;'>")
+        for link in SOCIAL_LINKS:
+            target = 'target="_blank"' if "mailto" not in link['url'] else ''
+            f.write(f"<a href='{link['url']}' {target}><i class='{link['icon']}'></i></a>")
+        f.write("</div></nav>")
+
+        # 2. MAIN CONTENT
+        f.write('<div class="main-content">')
+
+        # 3. HERO
+        f.write(f"""
         <header class="hero" id="home">
             <div class="slideshow-container" id="hero-slides"></div>
             <div class="hero-text">
-                <h1 class="hero-title">Richard's Photography</h1>
+                <h1 class="hero-title">{SITE_TITLE}</h1>
                 <p class="hero-subtitle">Street | Nature | Portrait</p>
             </div>
         </header>
-        
+        """)
+
+        # 4. TOP NAV
+        f.write("""
         <div id="galleries-start"></div>
         <nav class="gallery-nav">
             <a href="#street">Street</a>
@@ -256,31 +324,22 @@
             <span class="nav-sep">|</span>
             <a href="#portrait">Portrait</a>
         </nav>
-        
-            <section id="street">
-                <div class="section-header"><h2 class="section-title">street</h2></div>
-                <div class="gallery-grid" id="grid-street"></div>
+        """)
+
+        # 5. GALLERIES
+        for cat in categories_js_data.keys():
+            f.write(f"""
+            <section id="{cat}">
+                <div class="section-header"><h2 class="section-title">{cat}</h2></div>
+                <div class="gallery-grid" id="grid-{cat}"></div>
                 <div class="btn-wrapper">
-                    <button class="view-more-btn" onclick="toggleSection('street')" id="btn-street">View More</button>
+                    <button class="view-more-btn" onclick="toggleSection('{cat}')" id="btn-{cat}">View More</button>
                 </div>
             </section>
-            
-            <section id="nature">
-                <div class="section-header"><h2 class="section-title">nature</h2></div>
-                <div class="gallery-grid" id="grid-nature"></div>
-                <div class="btn-wrapper">
-                    <button class="view-more-btn" onclick="toggleSection('nature')" id="btn-nature">View More</button>
-                </div>
-            </section>
-            
-            <section id="portrait">
-                <div class="section-header"><h2 class="section-title">portrait</h2></div>
-                <div class="gallery-grid" id="grid-portrait"></div>
-                <div class="btn-wrapper">
-                    <button class="view-more-btn" onclick="toggleSection('portrait')" id="btn-portrait">View More</button>
-                </div>
-            </section>
-            
+            """)
+
+        # 6. ABOUT
+        f.write("""
         <section id="about">
             <div class="section-header"><h2 class="section-title">About Me</h2></div>
             <div class="text-content">
@@ -290,12 +349,15 @@
                 or witnessing the quiet majesty of nature, my goal remains the same: to freeze a fleeting moment that might otherwise be missed.</p>
             </div>
         </section>
-        
+        """)
+
+        # 7. CONTACT
+        f.write(f"""
         <section id="contact">
             <div class="section-header"><h2 class="section-title">Contact</h2></div>
             <div class="text-content">
                 <p>Interested in prints or collaboration?</p>
-                <form action="https://formspree.io/f/mykybnrg" method="POST" style="margin-top: 30px; text-align: left; display: flex; flex-direction: column; gap: 15px;">
+                <form action="{FORMSPREE_URL}" method="POST" style="margin-top: 30px; text-align: left; display: flex; flex-direction: column; gap: 15px;">
                     <label style="color:#999; font-size: 12px; font-weight: bold; text-transform: uppercase;">Name</label>
                     <input type="text" name="name" placeholder="Your Name" required style="padding: 15px; background: #222; border: 1px solid #444; color: white; font-family: inherit;">
                     
@@ -309,16 +371,22 @@
                 </form>
             </div>
         </section>
-        
+        """)
+
+        # 8. FOOTER WITH GLOBE WIDGET (UPDATED PROTOCOL)
+        f.write(f"""
         <footer>
             <div style="width: 250px; height: 250px; overflow: hidden; border-radius: 50%; box-shadow: 0 0 20px rgba(255,255,255,0.1);">
                 <script type="text/javascript" id="mmvst_globe" src="https://mapmyvisitors.com/globe.js?d=OvRAWX3P9dxuVfxIndyu0KctuugYDxK7PnJ8iiIKGeE"></script>
             </div>
             
-            <p>© 2025 Richard's Photography</p>
+            <p>Â© 2025 {SITE_TITLE}</p>
         </footer>
         </div>
-        
+        """)
+
+        # 9. SCRIPTS
+        f.write(f"""
         <div class="lightbox" id="lightbox" onclick="closeLightbox()">
             <div class="close-btn"><svg viewBox="0 0 24 24"><path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg></div>
             <img id="lightbox-img" src="">
@@ -326,67 +394,67 @@
 
         <script>
             // --- UI FUNCTIONS ---
-            function toggleMenu() {
+            function toggleMenu() {{
                 const nav = document.getElementById('navLinks');
                 nav.classList.toggle('active');
-            }
+            }}
 
-            function toggleSubmenu() {
+            function toggleSubmenu() {{
                 const sub = document.getElementById('gal-submenu');
                 const caret = document.getElementById('gal-caret');
                 sub.classList.toggle('active');
-                if(sub.classList.contains('active')) {
+                if(sub.classList.contains('active')) {{
                     caret.classList.remove('fa-caret-down');
                     caret.classList.add('fa-caret-up');
-                } else {
+                }} else {{
                     caret.classList.remove('fa-caret-up');
                     caret.classList.add('fa-caret-down');
-                }
-            }
+                }}
+            }}
 
             // --- DATA ---
-            const baseCategories = {"street": ["IMG_0709.jpg", "IMG_0776.jpg", "IMG_9449.jpg", "IMG_9650.jpg", "IMG_1202.jpg", "IMG_1176.jpg", "IMG_1144.jpg", "IMG_1371.jpg", "IMG_1378.jpg", "IMG_0397.jpg", "IMG_0418.jpg", "IMG_0465.jpg", "IMG_4309.jpg", "IMG_1945.jpg", "IMG_2009.jpg", "IMG_2017.jpg", "IMG_2991.jpg", "IMG_3135.jpg", "IMG_3299.jpg", "IMG_3304.jpg"], "nature": ["StarStaX_IMG_2000-IMG_2293_gap_filling1.jpg", "IMG_1886.jpg", "IMG_8670.jpg", "IMG_4003.jpg", "IMG_8845.jpg", "IMG_1565.jpg", "IMG_0466.jpg", "IMG_1790.jpg", "IMG_1545.jpg", "IMG_2016.jpg", "IMG_2264.jpg", "IMG_1786.jpg", "IMG_1807.jpg", "IMG_1808.jpg", "IMG_2344.jpg", "IMG_3832.jpg", "IMG_4962.jpg", "IMG_6001.jpg", "IMG_7189.jpg", "IMG_7225.jpg", "IMG_7311.jpg", "IMG_7346.jpg", "IMG_4129.jpg", "IMG_4147.jpg", "IMG_2604.jpg", "IMG_2618.jpg", "IMG_3331.jpg", "IMG_3356.jpg"], "portrait": ["IMG_3216.jpg", "IMG_3283.jpg", "IMG_3608.jpg", "IMG_1315.jpg", "IMG_8413.jpg", "IMG_7815.jpg", "IMG_7561.jpg", "IMG_7511.jpg", "IMG_8645.jpg", "IMG_8866.jpg", "IMG_3363.jpg", "IMG_0743.jpg", "IMG_0768.jpg", "IMG_1850.jpg", "IMG_1907.jpg", "IMG_3146.jpg", "IMG_4767.jpg", "IMG_6063.jpg", "IMG_6205.jpg", "IMG_2407.jpg", "IMG_2473.jpg", "IMG_6274.jpg", "IMG_6335.jpg", "IMG_6348.jpg", "IMG_6393.jpg", "IMG_6413.jpg", "IMG_7085.jpg", "IMG_2833.jpg", "IMG_4148.jpg", "IMG_4335.jpg", "IMG_1856.jpg"]};
-            const additionalImages = {"street": ["IMG_1162.jpg", "IMG_9505.jpg", "IMG_0745.jpg", "IMG_8385.jpg", "IMG_0726.jpg", "IMG_5076.jpg", "IMG_1810.jpg", "IMG_3737.jpg", "IMG_2168.jpg", "IMG_2084.jpg", "IMG_5259.jpg", "IMG_1177.jpg", "IMG_3400.jpg", "IMG_2012.jpg", "IMG_2016_2.jpg", "IMG_2641.jpg"], "nature": ["IMG_4006.jpg", "IMG_1621.jpg", "IMG_5844.jpg", "IMG_0209.jpg", "IMG_0280.jpg", "IMG_0755.jpg", "IMG_1895.jpg", "IMG_1919.jpg", "IMG_1993.jpg", "IMG_2021.jpg", "IMG_2561.jpg", "IMG_2583.jpg", "IMG_4897.jpg", "IMG_3473.jpg", "IMG_4141.jpg"], "portrait": ["IMG_2848.jpg", "IMG_6053.jpg", "IMG_6091.jpg", "IMG_5457.jpg", "IMG_2498.jpg", "IMG_3185.jpg", "IMG_6442.jpg", "IMG_6825.jpg", "IMG_9266.jpg", "IMG_7956.jpg", "IMG_7975.jpg", "IMG_7536.jpg", "IMG_7737.jpg", "IMG_7809.jpg", "IMG_7820.jpg", "IMG_7827.jpg", "IMG_7794.jpg", "IMG_4732.jpg", "IMG_4734.jpg", "IMG_2943.jpg", "IMG_4353.jpg", "IMG_4797.jpg", "IMG_2599.jpg", "IMG_3479.jpg", "IMG_3573.jpg", "IMG_4327.jpg", "IMG_0831.jpg"]};
-            const allBgImages = ["photos-reduce/street/IMG_0709.jpg", "photos-reduce/street/IMG_0776.jpg", "photos-reduce/street/IMG_9449.jpg", "photos-reduce/street/IMG_9650.jpg", "photos-reduce/street/IMG_1202.jpg", "photos-reduce/street/IMG_1176.jpg", "photos-reduce/street/IMG_1144.jpg", "photos-reduce/street/IMG_1371.jpg", "photos-reduce/street/IMG_1378.jpg", "photos-reduce/street/IMG_0397.jpg", "photos-reduce/street/IMG_0418.jpg", "photos-reduce/street/IMG_0465.jpg", "photos-reduce/street/IMG_4309.jpg", "photos-reduce/street/IMG_1945.jpg", "photos-reduce/street/IMG_2009.jpg", "photos-reduce/street/IMG_2017.jpg", "photos-reduce/street/IMG_2991.jpg", "photos-reduce/street/IMG_3135.jpg", "photos-reduce/street/IMG_3299.jpg", "photos-reduce/street/IMG_3304.jpg", "photos-reduce/nature/StarStaX_IMG_2000-IMG_2293_gap_filling1.jpg", "photos-reduce/nature/IMG_1886.jpg", "photos-reduce/nature/IMG_8670.jpg", "photos-reduce/nature/IMG_4003.jpg", "photos-reduce/nature/IMG_8845.jpg", "photos-reduce/nature/IMG_1565.jpg", "photos-reduce/nature/IMG_0466.jpg", "photos-reduce/nature/IMG_1790.jpg", "photos-reduce/nature/IMG_1545.jpg", "photos-reduce/nature/IMG_2016.jpg", "photos-reduce/nature/IMG_2264.jpg", "photos-reduce/nature/IMG_1786.jpg", "photos-reduce/nature/IMG_1807.jpg", "photos-reduce/nature/IMG_1808.jpg", "photos-reduce/nature/IMG_2344.jpg", "photos-reduce/nature/IMG_3832.jpg", "photos-reduce/nature/IMG_4962.jpg", "photos-reduce/nature/IMG_6001.jpg", "photos-reduce/nature/IMG_7189.jpg", "photos-reduce/nature/IMG_7225.jpg", "photos-reduce/nature/IMG_7311.jpg", "photos-reduce/nature/IMG_7346.jpg", "photos-reduce/nature/IMG_4129.jpg", "photos-reduce/nature/IMG_4147.jpg", "photos-reduce/nature/IMG_2604.jpg", "photos-reduce/nature/IMG_2618.jpg", "photos-reduce/nature/IMG_3331.jpg", "photos-reduce/nature/IMG_3356.jpg", "photos-reduce/portrait/IMG_3216.jpg", "photos-reduce/portrait/IMG_3283.jpg", "photos-reduce/portrait/IMG_3608.jpg", "photos-reduce/portrait/IMG_1315.jpg", "photos-reduce/portrait/IMG_8413.jpg", "photos-reduce/portrait/IMG_7815.jpg", "photos-reduce/portrait/IMG_7561.jpg", "photos-reduce/portrait/IMG_7511.jpg", "photos-reduce/portrait/IMG_8645.jpg", "photos-reduce/portrait/IMG_8866.jpg", "photos-reduce/portrait/IMG_3363.jpg", "photos-reduce/portrait/IMG_0743.jpg", "photos-reduce/portrait/IMG_0768.jpg", "photos-reduce/portrait/IMG_1850.jpg", "photos-reduce/portrait/IMG_1907.jpg", "photos-reduce/portrait/IMG_3146.jpg", "photos-reduce/portrait/IMG_4767.jpg", "photos-reduce/portrait/IMG_6063.jpg", "photos-reduce/portrait/IMG_6205.jpg", "photos-reduce/portrait/IMG_2407.jpg", "photos-reduce/portrait/IMG_2473.jpg", "photos-reduce/portrait/IMG_6274.jpg", "photos-reduce/portrait/IMG_6335.jpg", "photos-reduce/portrait/IMG_6348.jpg", "photos-reduce/portrait/IMG_6393.jpg", "photos-reduce/portrait/IMG_6413.jpg", "photos-reduce/portrait/IMG_7085.jpg", "photos-reduce/portrait/IMG_2833.jpg", "photos-reduce/portrait/IMG_4148.jpg", "photos-reduce/portrait/IMG_4335.jpg", "photos-reduce/portrait/IMG_1856.jpg"];
-            const thumbDir = "photos-reduce";
-            const fullDir = "photos-1_5_resolution";
-            let expandedState = { street: false, nature: false, portrait: false };
+            const baseCategories = {cats_json};
+            const additionalImages = {adds_json};
+            const allBgImages = {bg_images_js};
+            const thumbDir = "{THUMBNAIL_DIR}";
+            const fullDir = "{FULL_RES_DIR}";
+            let expandedState = {{ street: false, nature: false, portrait: false }};
 
             // --- INSTANT LOAD SLIDESHOW ENGINE ---
             const heroContainer = document.getElementById('hero-slides');
             
-            function shuffle(array) {
-                for (let i = array.length - 1; i > 0; i--) {
+            function shuffle(array) {{
+                for (let i = array.length - 1; i > 0; i--) {{
                     const j = Math.floor(Math.random() * (i + 1));
                     [array[i], array[j]] = [array[j], array[i]];
-                }
+                }}
                 return array;
-            }
+            }}
 
-            async function buildSlides(imagePaths) {
+            async function buildSlides(imagePaths) {{
                 const portraits = [];
                 const landscapes = [];
 
                 // 1. Analyze Aspect Ratios
-                await Promise.all(imagePaths.map(src => {
-                    return new Promise(resolve => {
+                await Promise.all(imagePaths.map(src => {{
+                    return new Promise(resolve => {{
                         const img = new Image();
                         img.src = src;
-                        img.onload = () => resolve({ src, isPortrait: img.height > img.width });
+                        img.onload = () => resolve({{ src, isPortrait: img.height > img.width }});
                         img.onerror = () => resolve(null);
-                    });
-                })).then(results => {
-                    results.forEach(res => {
+                    }});
+                }})).then(results => {{
+                    results.forEach(res => {{
                         if (!res) return;
                         if (res.isPortrait) portraits.push(res.src);
                         else landscapes.push(res.src);
-                    });
-                });
+                    }});
+                }});
 
                 // 2. Pair/Build elements
                 const newSlides = [];
 
-                while(portraits.length >= 2) {
+                while(portraits.length >= 2) {{
                     const p1 = portraits.pop();
                     const p2 = portraits.pop();
                     const el = document.createElement('div');
@@ -394,46 +462,46 @@
                     el.innerHTML = `
                         <div class="slide-content-double">
                             <div class="double-half">
-                                <div class="slide-bg-blur" style="background-image: url('${p1}');"></div>
-                                <div class="slide-img-contain" style="background-image: url('${p1}');"></div>
+                                <div class="slide-bg-blur" style="background-image: url('${{p1}}');"></div>
+                                <div class="slide-img-contain" style="background-image: url('${{p1}}');"></div>
                             </div>
                             <div class="double-half">
-                                <div class="slide-bg-blur" style="background-image: url('${p2}');"></div>
-                                <div class="slide-img-contain" style="background-image: url('${p2}');"></div>
+                                <div class="slide-bg-blur" style="background-image: url('${{p2}}');"></div>
+                                <div class="slide-img-contain" style="background-image: url('${{p2}}');"></div>
                             </div>
                         </div>`;
                     newSlides.push(el);
-                }
+                }}
 
                 // If any portraits left, add to single
-                while(portraits.length > 0) {
+                while(portraits.length > 0) {{
                     const p1 = portraits.pop();
                     const el = document.createElement('div');
                     el.className = 'slide';
                     el.innerHTML = `
                         <div class="slide-content-single">
-                            <div class="slide-bg-blur" style="background-image: url('${p1}');"></div>
-                            <div class="slide-img-contain" style="background-image: url('${p1}');"></div>
+                            <div class="slide-bg-blur" style="background-image: url('${{p1}}');"></div>
+                            <div class="slide-img-contain" style="background-image: url('${{p1}}');"></div>
                         </div>`;
                     newSlides.push(el);
-                }
+                }}
 
-                while(landscapes.length > 0) {
+                while(landscapes.length > 0) {{
                     const l1 = landscapes.pop();
                     const el = document.createElement('div');
                     el.className = 'slide';
                     el.innerHTML = `
                         <div class="slide-content-single">
-                            <div class="slide-bg-blur" style="background-image: url('${l1}');"></div>
-                            <div class="slide-img-contain" style="background-image: url('${l1}');"></div>
+                            <div class="slide-bg-blur" style="background-image: url('${{l1}}');"></div>
+                            <div class="slide-img-contain" style="background-image: url('${{l1}}');"></div>
                         </div>`;
                     newSlides.push(el);
-                }
+                }}
                 
                 return shuffle(newSlides);
-            }
+            }}
 
-            async function initSlideshow() {
+            async function initSlideshow() {{
                 const allShuffled = shuffle(allBgImages.slice());
                 
                 // --- STAGE 1: SUPER FAST LOAD (First 5 images only) ---
@@ -443,91 +511,96 @@
 
                 const slides1 = await buildSlides(batch1);
                 
-                if (slides1.length > 0) {
-                    slides1.forEach((el, index) => {
+                if (slides1.length > 0) {{
+                    slides1.forEach((el, index) => {{
                         if (index === 0) el.classList.add('active'); 
                         heroContainer.appendChild(el);
-                    });
-                }
+                    }});
+                }}
 
                 // Start Rotating immediately
                 let slideIndex = 0;
-                setInterval(() => {
+                setInterval(() => {{
                     const slides = document.querySelectorAll('.slide');
                     if(slides.length === 0) return;
                     slides[slideIndex].classList.remove('active');
                     slideIndex = (slideIndex + 1) % slides.length;
                     slides[slideIndex].classList.add('active');
-                }, 8000); 
+                }}, 8000); 
 
                 // --- STAGE 2: BACKGROUND LOAD (Wait 3 seconds) ---
-                if (batch2.length > 0) {
-                    setTimeout(async () => {
+                if (batch2.length > 0) {{
+                    setTimeout(async () => {{
                         console.log("Loading remaining images in background...");
                         const slides2 = await buildSlides(batch2);
                         slides2.forEach(el => heroContainer.appendChild(el));
-                    }, 3000);
-                }
-            }
+                    }}, 3000);
+                }}
+            }}
 
             initSlideshow();
 
             // --- GRID LOGIC ---
-            function createItem(filename, category) {
+            function createItem(filename, category) {{
                 let div = document.createElement('div');
                 div.className = 'gallery-item';
                 let img = document.createElement('img');
-                let thumbPath = `${thumbDir}/${category}/${filename}`;
-                let fullPath = `${fullDir}/${category}/${filename}`;
+                let thumbPath = `${{thumbDir}}/${{category}}/${{filename}}`;
+                let fullPath = `${{fullDir}}/${{category}}/${{filename}}`;
                 img.src = thumbPath;
                 img.loading = "lazy";
                 div.onclick = () => openLightbox(fullPath);
                 img.onload = () => resizeGridItem(div);
                 div.appendChild(img);
                 return div;
-            }
+            }}
 
-            function loadCategory(cat) {
-                let grid = document.getElementById(`grid-${cat}`);
+            function loadCategory(cat) {{
+                let grid = document.getElementById(`grid-${{cat}}`);
                 grid.innerHTML = ""; 
                 let imagesToShow = baseCategories[cat];
-                if (expandedState[cat]) { imagesToShow = imagesToShow.concat(additionalImages[cat]); }
-                if(imagesToShow) {
-                    imagesToShow.forEach(filename => { grid.appendChild(createItem(filename, cat)); });
-                }
-            }
+                if (expandedState[cat]) {{ imagesToShow = imagesToShow.concat(additionalImages[cat]); }}
+                if(imagesToShow) {{
+                    imagesToShow.forEach(filename => {{ grid.appendChild(createItem(filename, cat)); }});
+                }}
+            }}
 
-            function toggleSection(cat) {
+            function toggleSection(cat) {{
                 expandedState[cat] = !expandedState[cat];
-                let btn = document.getElementById(`btn-${cat}`);
+                let btn = document.getElementById(`btn-${{cat}}`);
                 btn.innerText = expandedState[cat] ? "View Less" : "View More";
                 loadCategory(cat);
-            }
+            }}
 
-            function resizeGridItem(item) {
+            function resizeGridItem(item) {{
                 let grid = item.parentElement;
                 let rowHeight = parseInt(window.getComputedStyle(grid).getPropertyValue('grid-auto-rows'));
                 let rowGap = parseInt(window.getComputedStyle(grid).getPropertyValue('gap'));
                 let rowSpan = Math.ceil((item.querySelector('img').getBoundingClientRect().height + rowGap) / (rowHeight + rowGap));
                 item.style.gridRowEnd = "span " + rowSpan;
                 item.style.visibility = "visible";
-            }
+            }}
 
-            function resizeAll() {
+            function resizeAll() {{
                 let allItems = document.getElementsByClassName("gallery-item");
-                for(let x=0; x<allItems.length;x++){ resizeGridItem(allItems[x]); }
-            }
+                for(let x=0; x<allItems.length;x++){{ resizeGridItem(allItems[x]); }}
+            }}
             window.addEventListener("resize", resizeAll);
             Object.keys(baseCategories).forEach(cat => loadCategory(cat));
 
-            function openLightbox(src) {
+            function openLightbox(src) {{
                 document.getElementById('lightbox-img').src = src;
                 document.getElementById('lightbox').style.display = 'flex';
-            }
-            function closeLightbox() {
+            }}
+            function closeLightbox() {{
                 document.getElementById('lightbox').style.display = 'none';
-            }
+            }}
         </script>
         </body>
         </html>
-        
+        """)
+
+    print("Success! Website generated.")
+
+if __name__ == "__main__":
+    generate_site()
