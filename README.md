@@ -94,7 +94,7 @@ Push your changes to the live website.
 git add .
 
 # 2. Save snapshot
-git commit -m "Added new photos to street gallery"
+git commit -m "HTML refresh" 
 
 # 3. Push to GitHub
 git push origin main
