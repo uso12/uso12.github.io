@@ -396,9 +396,8 @@ def generate_site():
         """)
 
         # 8. FOOTER WITH NEW MAP WIDGET
-        # Note: Implementing the specific code snippet from the screenshot provided by user.
-        # ID: ih0fU_T8cn4DCZyEufGDdfMcoxmgU19quoVwJl1mQVk
-        # Using map.js as per screenshot instructions.
+        # UPDATED: Using map.js with the new ID and proper https source.
+        # Also removed strict circle cropping so the map widget displays fully.
         f.write(f"""
         <footer>
             <div style="margin-bottom: 20px;">
