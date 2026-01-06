@@ -102,7 +102,7 @@ html_head = """<!DOCTYPE html>
             display: flex; 
             justify-content: center;
             align-items: flex-end; 
-            padding-bottom: 5vh; /* Lowered text position */
+            padding-bottom: 5vh;
             background: #000; 
         }
         
@@ -395,15 +395,15 @@ def generate_site():
         </section>
         """)
 
-        # 8. FOOTER WITH GLOBE WIDGET
-        # FIX: Wrapped the globe div in an <a> tag pointing explicitly to the user's ID URL.
+        # 8. FOOTER WITH NEW MAP WIDGET
+        # Note: Implementing the specific code snippet from the screenshot provided by user.
+        # ID: ih0fU_T8cn4DCZyEufGDdfMcoxmgU19quoVwJl1mQVk
+        # Using map.js as per screenshot instructions.
         f.write(f"""
         <footer>
-            <a href="https://mapmyvisitors.com?d=OvRAWX3P9dxuVfxIndyu0KctuugYDxK7PnJ8iiIKGeE" target="_blank" style="text-decoration: none;">
-                <div style="width: 250px; height: 250px; overflow: hidden; border-radius: 50%; box-shadow: 0 0 20px rgba(255,255,255,0.1); cursor: pointer;">
-                    <script type="text/javascript" id="mmvst_globe" src="https://mapmyvisitors.com/globe.js?d=OvRAWX3P9dxuVfxIndyu0KctuugYDxK7PnJ8iiIKGeE"></script>
-                </div>
-            </a>
+            <div style="margin-bottom: 20px;">
+                <script type="text/javascript" id="mapmyvisitors" src="https://mapmyvisitors.com/map.js?d=ih0fU_T8cn4DCZyEufGDdfMcoxmgU19quoVwJl1mQVk&cl=ffffff&w=a"></script>
+            </div>
             
             <p>© 2025 {SITE_TITLE}</p>
         </footer>
