@@ -395,13 +395,13 @@ def generate_site():
         </section>
         """)
 
-        # 8. FOOTER WITH NEW MAP WIDGET
-        # UPDATED: Using map.js with the new ID and proper https source.
-        # Also removed strict circle cropping so the map widget displays fully.
+        # 8. FOOTER WITH GLOBE WIDGET
+        # UPDATED: Removed the <a> tag and complex styling that was breaking the widget.
+        # Uses the specific mapmyvisitors ID you requested.
         f.write(f"""
         <footer>
-            <div style="margin-bottom: 20px;">
-                <script type="text/javascript" id="mapmyvisitors" src="https://mapmyvisitors.com/map.js?d=ih0fU_T8cn4DCZyEufGDdfMcoxmgU19quoVwJl1mQVk&cl=ffffff&w=a"></script>
+            <div style="width: 200px; height: 200px; margin: 0 auto; display: block; position: relative;">
+                <script type="text/javascript" id="mmvst_globe" src="//mapmyvisitors.com/globe.js?d=OvRAWX3P9dxuVfxIndyu0KctuugYDxK7PnJ8iiIKGeE"></script>
             </div>
             
             <p>© 2025 {SITE_TITLE}</p>
