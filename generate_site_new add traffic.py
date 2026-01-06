@@ -396,13 +396,14 @@ def generate_site():
         """)
 
         # 8. FOOTER WITH GLOBE WIDGET
-        # NOTE: I have enabled pointer events again (removed pointer-events: none)
-        # and kept 'https:' to ensure it loads on your local machine.
+        # FIX: Wrapped the globe div in an <a> tag pointing explicitly to the user's ID URL.
         f.write(f"""
         <footer>
-            <div style="width: 250px; height: 250px; overflow: hidden; border-radius: 50%; box-shadow: 0 0 20px rgba(255,255,255,0.1); cursor: pointer;">
-                <script type="text/javascript" id="mmvst_globe" src="https://mapmyvisitors.com/globe.js?d=OvRAWX3P9dxuVfxIndyu0KctuugYDxK7PnJ8iiIKGeE"></script>
-            </div>
+            <a href="https://mapmyvisitors.com?d=OvRAWX3P9dxuVfxIndyu0KctuugYDxK7PnJ8iiIKGeE" target="_blank" style="text-decoration: none;">
+                <div style="width: 250px; height: 250px; overflow: hidden; border-radius: 50%; box-shadow: 0 0 20px rgba(255,255,255,0.1); cursor: pointer;">
+                    <script type="text/javascript" id="mmvst_globe" src="https://mapmyvisitors.com/globe.js?d=OvRAWX3P9dxuVfxIndyu0KctuugYDxK7PnJ8iiIKGeE"></script>
+                </div>
+            </a>
             
             <p>© 2025 {SITE_TITLE}</p>
         </footer>
