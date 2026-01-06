@@ -20,13 +20,14 @@ SOCIAL_LINKS = [
 ]
 
 # --- HTML HEADER TEMPLATE ---
+# 修改点 1: 引入 Cormorant Garamond (Logo) 和 Great Vibes (Hero Title)
 html_head = """<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>""" + SITE_TITLE + """</title>
-    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700;900&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;700&family=Great+Vibes&family=Montserrat:wght@400;700;900&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <style>
         /* --- GLOBAL & RESET --- */
@@ -48,7 +49,20 @@ html_head = """<!DOCTYPE html>
             border-right: 1px solid #222;
             z-index: 1000;
         }
-        .logo { font-size: 22px; color: #fff; font-weight: 800; margin-bottom: 40px; border-bottom: 2px solid var(--accent); padding-bottom: 10px; display: inline-block; letter-spacing: 1px; }
+        
+        /* 修改点 2: Logo 字体改为 Cormorant Garamond */
+        .logo { 
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 28px; 
+            color: #fff; 
+            font-weight: 700; 
+            margin-bottom: 40px; 
+            border-bottom: 2px solid var(--accent); 
+            padding-bottom: 10px; 
+            display: inline-block; 
+            letter-spacing: 1px; 
+            text-transform: uppercase; /* 衬线体大写通常比较好看，也可以去掉 */
+        }
         
         .nav-links { display: flex; flex-direction: column; gap: 18px; }
         .nav-links a { color: #999; font-size: 13px; text-transform: uppercase; letter-spacing: 2px; font-weight: 700; }
@@ -65,7 +79,7 @@ html_head = """<!DOCTYPE html>
             gap: 12px; 
             margin-top: 15px; 
             margin-bottom: 5px;
-            padding-left: 15px; /* Indent */
+            padding-left: 15px;
             border-left: 1px solid #333; 
         }
         .submenu.active { display: flex; }
@@ -89,7 +103,8 @@ html_head = """<!DOCTYPE html>
             display: flex; 
             justify-content: center;
             align-items: flex-end; 
-            padding-bottom: 5vh;
+            /* 修改点 3: 这里的 padding-bottom 决定文字离底部的距离。越小越靠下 */
+            padding-bottom: 5vh; 
             background: #000; 
         }
         
@@ -135,10 +150,17 @@ html_head = """<!DOCTYPE html>
         .hero-text { 
             position: relative; z-index: 3; text-align: center; pointer-events: none; padding: 0 15px; width: 100%; max-width: 1000px;
         }
+
+        /* 修改点 4: Hero Title 字体改为 Great Vibes */
         .hero-title { 
-            font-size: 4.5rem; text-transform: uppercase; letter-spacing: 8px; margin: 0; color: #fff; font-weight: 900; 
-            text-shadow: 0 4px 15px rgba(0,0,0,1); opacity: 0.5; line-height: 1.1;
+            font-family: 'Great Vibes', cursive; /* 手写艺术体 */
+            font-size: 6rem; /* 手写体通常比印刷体看起来小，所以稍微加大 */
+            text-transform: none; /* 手写体不适合全大写，改为正常大小写 */
+            letter-spacing: 2px; 
+            margin: 0; color: #fff; font-weight: 400; 
+            text-shadow: 0 4px 15px rgba(0,0,0,1); opacity: 0.6; line-height: 1.1;
         }
+
         .hero-subtitle { 
             font-size: 1.1rem; color: #ccc; margin-top: 15px; letter-spacing: 4px; font-weight: 500; text-transform: uppercase; opacity: 0.0;
         }
@@ -216,7 +238,8 @@ html_head = """<!DOCTYPE html>
             .main-content { margin-left: 0; width: 100%; }
             
             .hero-title { 
-                font-size: 1.8rem; letter-spacing: 2px; line-height: 1.3; white-space: normal; 
+                font-size: 3rem; /* 移动端稍微减小 */
+                letter-spacing: 1px; line-height: 1.3; white-space: normal; 
             }
             .hero-subtitle { font-size: 0.75rem; letter-spacing: 2px; margin-top: 10px; }
             
@@ -267,7 +290,8 @@ def generate_site():
     adds_json = json.dumps(additional_images_js_data)
     bg_images_js = json.dumps(slideshow_images) 
 
-    with open("index.html", "w") as f:
+    # 修改点 5: 强制使用 UTF-8 编码写入文件，防止版权符号乱码
+    with open("index.html", "w", encoding="utf-8") as f:
         f.write(html_head)
 
         # 1. SIDEBAR
@@ -335,7 +359,7 @@ def generate_site():
                 <div class="btn-wrapper">
                     <button class="view-more-btn" onclick="toggleSection('{cat}')" id="btn-{cat}">View More</button>
                 </div>
-            </section>
+            section>
             """)
 
         # 6. ABOUT
@@ -373,14 +397,18 @@ def generate_site():
         </section>
         """)
 
-        # 8. FOOTER WITH GLOBE WIDGET (UPDATED PROTOCOL)
+        # 8. FOOTER WITH GLOBE WIDGET (FIXED)
+        # 修改点 6: 
+        # - 添加了 pointer-events: none (禁止点击跳转)
+        # - 添加了 https: (修复本地加载)
+        # - 使用 &copy; (修复乱码)
         f.write(f"""
         <footer>
-            <div style="width: 250px; height: 250px; overflow: hidden; border-radius: 50%; box-shadow: 0 0 20px rgba(255,255,255,0.1);">
+            <div style="width: 250px; height: 250px; overflow: hidden; border-radius: 50%; box-shadow: 0 0 20px rgba(255,255,255,0.1); pointer-events: none;">
                 <script type="text/javascript" id="mmvst_globe" src="https://mapmyvisitors.com/globe.js?d=OvRAWX3P9dxuVfxIndyu0KctuugYDxK7PnJ8iiIKGeE"></script>
             </div>
             
-            <p>© 2025 {SITE_TITLE}</p>
+            <p>&copy; 2025 {SITE_TITLE}</p>
         </footer>
         </div>
         """)
@@ -505,7 +533,6 @@ def generate_site():
                 const allShuffled = shuffle(allBgImages.slice());
                 
                 // --- STAGE 1: SUPER FAST LOAD (First 5 images only) ---
-                // We pick 5 to guarantee at least 2 slides (pairs or singles)
                 const batch1 = allShuffled.slice(0, 5); 
                 const batch2 = allShuffled.slice(5);
 
