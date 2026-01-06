@@ -20,7 +20,6 @@ SOCIAL_LINKS = [
 ]
 
 # --- HTML HEADER TEMPLATE ---
-# 修改点 1: 引入 Cormorant Garamond (Logo) 和 Great Vibes (Hero Title)
 html_head = """<!DOCTYPE html>
 <html lang="en">
 <head>
@@ -50,7 +49,7 @@ html_head = """<!DOCTYPE html>
             z-index: 1000;
         }
         
-        /* 修改点 2: Logo 字体改为 Cormorant Garamond */
+        /* LOGO FONT: Cormorant Garamond */
         .logo { 
             font-family: 'Cormorant Garamond', serif;
             font-size: 28px; 
@@ -61,7 +60,7 @@ html_head = """<!DOCTYPE html>
             padding-bottom: 10px; 
             display: inline-block; 
             letter-spacing: 1px; 
-            text-transform: uppercase; /* 衬线体大写通常比较好看，也可以去掉 */
+            text-transform: uppercase;
         }
         
         .nav-links { display: flex; flex-direction: column; gap: 18px; }
@@ -103,8 +102,7 @@ html_head = """<!DOCTYPE html>
             display: flex; 
             justify-content: center;
             align-items: flex-end; 
-            /* 修改点 3: 这里的 padding-bottom 决定文字离底部的距离。越小越靠下 */
-            padding-bottom: 5vh; 
+            padding-bottom: 5vh; /* Lowered text position */
             background: #000; 
         }
         
@@ -150,17 +148,16 @@ html_head = """<!DOCTYPE html>
         .hero-text { 
             position: relative; z-index: 3; text-align: center; pointer-events: none; padding: 0 15px; width: 100%; max-width: 1000px;
         }
-
-        /* 修改点 4: Hero Title 字体改为 Great Vibes */
+        
+        /* HERO FONT: Great Vibes */
         .hero-title { 
-            font-family: 'Great Vibes', cursive; /* 手写艺术体 */
-            font-size: 6rem; /* 手写体通常比印刷体看起来小，所以稍微加大 */
-            text-transform: none; /* 手写体不适合全大写，改为正常大小写 */
+            font-family: 'Great Vibes', cursive; 
+            font-size: 6rem; 
+            text-transform: none; 
             letter-spacing: 2px; 
             margin: 0; color: #fff; font-weight: 400; 
-            text-shadow: 0 4px 15px rgba(0,0,0,1); opacity: 0.6; line-height: 1.1;
+            text-shadow: 0 4px 15px rgba(0,0,0,1); opacity: 0.9; line-height: 1.1;
         }
-
         .hero-subtitle { 
             font-size: 1.1rem; color: #ccc; margin-top: 15px; letter-spacing: 4px; font-weight: 500; text-transform: uppercase; opacity: 0.0;
         }
@@ -238,7 +235,7 @@ html_head = """<!DOCTYPE html>
             .main-content { margin-left: 0; width: 100%; }
             
             .hero-title { 
-                font-size: 3rem; /* 移动端稍微减小 */
+                font-size: 3rem; 
                 letter-spacing: 1px; line-height: 1.3; white-space: normal; 
             }
             .hero-subtitle { font-size: 0.75rem; letter-spacing: 2px; margin-top: 10px; }
@@ -290,7 +287,7 @@ def generate_site():
     adds_json = json.dumps(additional_images_js_data)
     bg_images_js = json.dumps(slideshow_images) 
 
-    # 修改点 5: 强制使用 UTF-8 编码写入文件，防止版权符号乱码
+    # FORCE UTF-8
     with open("index.html", "w", encoding="utf-8") as f:
         f.write(html_head)
 
@@ -359,7 +356,7 @@ def generate_site():
                 <div class="btn-wrapper">
                     <button class="view-more-btn" onclick="toggleSection('{cat}')" id="btn-{cat}">View More</button>
                 </div>
-            section>
+            </section>
             """)
 
         # 6. ABOUT
@@ -397,14 +394,10 @@ def generate_site():
         </section>
         """)
 
-        # 8. FOOTER WITH GLOBE WIDGET (FIXED)
-        # 修改点 6: 
-        # - 添加了 pointer-events: none (禁止点击跳转)
-        # - 添加了 https: (修复本地加载)
-        # - 使用 &copy; (修复乱码)
+        # 8. FOOTER WITH GLOBE WIDGET (CLICKABLE)
         f.write(f"""
         <footer>
-            <div style="width: 250px; height: 250px; overflow: hidden; border-radius: 50%; box-shadow: 0 0 20px rgba(255,255,255,0.1); pointer-events: none;">
+            <div style="width: 250px; height: 250px; overflow: hidden; border-radius: 50%; box-shadow: 0 0 20px rgba(255,255,255,0.1); cursor: pointer;">
                 <script type="text/javascript" id="mmvst_globe" src="https://mapmyvisitors.com/globe.js?d=OvRAWX3P9dxuVfxIndyu0KctuugYDxK7PnJ8iiIKGeE"></script>
             </div>
             
