@@ -396,12 +396,12 @@ def generate_site():
         """)
 
         # 8. FOOTER WITH GLOBE WIDGET
-        # UPDATED: Removed the <a> tag and complex styling that was breaking the widget.
-        # Uses the specific mapmyvisitors ID you requested.
+        # UPDATED: Uses the new ClustrMaps script with your specific ID.
+        # The container is a simple block div to prevent rendering issues.
         f.write(f"""
         <footer>
             <div style="width: 200px; height: 200px; margin: 0 auto; display: block; position: relative;">
-                <script type="text/javascript" id="mmvst_globe" src="//mapmyvisitors.com/globe.js?d=OvRAWX3P9dxuVfxIndyu0KctuugYDxK7PnJ8iiIKGeE"></script>
+                <script type="text/javascript" id="clstr_globe" src="//clustrmaps.com/globe.js?d=E_nRFNN03offGkQt3BBMZgjUYSm_Xw5x4XbXMeW-p64"></script>
             </div>
             
             <p>© 2025 {SITE_TITLE}</p>
