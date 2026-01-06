@@ -49,7 +49,7 @@ html_head = """<!DOCTYPE html>
             z-index: 1000;
         }
         
-        /* LOGO FONT: Cormorant Garamond */
+        /* LOGO STYLE: Cormorant Garamond */
         .logo { 
             font-family: 'Cormorant Garamond', serif;
             font-size: 28px; 
@@ -60,7 +60,7 @@ html_head = """<!DOCTYPE html>
             padding-bottom: 10px; 
             display: inline-block; 
             letter-spacing: 1px; 
-            text-transform: uppercase;
+            text-transform: uppercase; 
         }
         
         .nav-links { display: flex; flex-direction: column; gap: 18px; }
@@ -149,20 +149,21 @@ html_head = """<!DOCTYPE html>
             position: relative; z-index: 3; text-align: center; pointer-events: none; padding: 0 15px; width: 100%; max-width: 1000px;
         }
         
-        /* HERO FONT: Great Vibes */
+        /* HERO TITLE: Great Vibes */
         .hero-title { 
             font-family: 'Great Vibes', cursive; 
-            font-size: 6rem; 
+            font-size: 6rem;
             text-transform: none; 
             letter-spacing: 2px; 
             margin: 0; color: #fff; font-weight: 400; 
             text-shadow: 0 4px 15px rgba(0,0,0,1); opacity: 0.9; line-height: 1.1;
         }
+
         .hero-subtitle { 
             font-size: 1.1rem; color: #ccc; margin-top: 15px; letter-spacing: 4px; font-weight: 500; text-transform: uppercase; opacity: 0.0;
         }
 
-        /* --- GALLERY NAV (Desktop Defaults) --- */
+        /* --- GALLERY NAV --- */
         .gallery-nav { 
             position: sticky; top: 0; z-index: 900; 
             background: rgba(18, 18, 18, 0.95); backdrop-filter: blur(5px);
@@ -235,7 +236,7 @@ html_head = """<!DOCTYPE html>
             .main-content { margin-left: 0; width: 100%; }
             
             .hero-title { 
-                font-size: 3rem; 
+                font-size: 3rem;
                 letter-spacing: 1px; line-height: 1.3; white-space: normal; 
             }
             .hero-subtitle { font-size: 0.75rem; letter-spacing: 2px; margin-top: 10px; }
@@ -287,7 +288,7 @@ def generate_site():
     adds_json = json.dumps(additional_images_js_data)
     bg_images_js = json.dumps(slideshow_images) 
 
-    # FORCE UTF-8
+    # Ensure UTF-8 for copyright symbol
     with open("index.html", "w", encoding="utf-8") as f:
         f.write(html_head)
 
@@ -394,14 +395,16 @@ def generate_site():
         </section>
         """)
 
-        # 8. FOOTER WITH GLOBE WIDGET (CLICKABLE)
+        # 8. FOOTER WITH GLOBE WIDGET
+        # NOTE: I have enabled pointer events again (removed pointer-events: none)
+        # and kept 'https:' to ensure it loads on your local machine.
         f.write(f"""
         <footer>
             <div style="width: 250px; height: 250px; overflow: hidden; border-radius: 50%; box-shadow: 0 0 20px rgba(255,255,255,0.1); cursor: pointer;">
                 <script type="text/javascript" id="mmvst_globe" src="https://mapmyvisitors.com/globe.js?d=OvRAWX3P9dxuVfxIndyu0KctuugYDxK7PnJ8iiIKGeE"></script>
             </div>
             
-            <p>&copy; 2025 {SITE_TITLE}</p>
+            <p>© 2025 {SITE_TITLE}</p>
         </footer>
         </div>
         """)
